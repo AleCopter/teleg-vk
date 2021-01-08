@@ -18,7 +18,22 @@
 
   <img [src]='image' />
   <div class="block" >
-    <div *ngFor="let d of telegAPIservice.dialogs?.messages" class="row">
-      {{d.message}}
+    <div *ngFor="let d of telegAPIservice.dialogList" class="row">
+      <div class="r-image">
+        <img src="https://i.pinimg.com/originals/37/9b/4a/379b4a87c8aa4e24c240e80420338f28.png">
+      </div>
+      <div class="r-text">
+        <div class="r-t-title">
+          {{d.title}}
+        </div>
+        <div class="r-t-message">
+          <span>user: </span>{{d.message}}
+        </div>
+      </div>
+      <div class="r-info">
+        <div class="r-i-time"> 20:20</div>
+        <div class="r-i-count"> 1</div>
+      </div>
+   
         </div>
   </div>

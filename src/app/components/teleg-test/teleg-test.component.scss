@@ -9,10 +9,61 @@
         .row {
             margin: 4px 0px;
             padding: 8px;
-            color: black;
-            background: white;
+            color: white;
+            background: #17212b;
             height: 40px;
             overflow: hidden;
+            width: 100%;
+
+            display: flex;
+            flex-direction: row;
+            .r-image {
+                width: 52px;
+                display: flex;
+                margin-right: 8px;
+                img {
+                    width: 40px;
+                    height: 40px;
+                    margin: auto;
+                    border-radius: 24px;
+                }
+            }
+
+            .r-text {
+                width: calc(100% - 116px);
+                
+                display: flex;
+                flex-direction: column;
+                .r-t-title {
+                    margin: auto 0;
+                }
+                .r-t-message {
+                    margin: auto 0;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    span {
+                        color: #73b9f5;
+                    }           
+                }
+            }
+            .r-info {
+                width: 40px;
+                display: flex;
+                flex-direction: column;
+                .r-i-time {
+                    margin: auto 0;
+                    color: #3e546a;;
+                }
+                .r-i-count {
+                    margin: auto 0;
+                    background: #3e546a;
+                    width: fit-content;
+                    padding: 0px 5px;
+                    border-radius: 10px;
+                    font-size: 12px;
+                }
+            }
         }
     }
 
