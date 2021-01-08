@@ -10,7 +10,10 @@ const routes: Routes = [
   { path: 'vk', component: VkTestComponent },
   { path: 'teleg', component: TelegTestComponent },
 
-
+  { path: '',
+    redirectTo: '/teleg',
+    pathMatch: 'full'
+  },
 ];
 
 @NgModule({

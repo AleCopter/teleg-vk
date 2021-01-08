@@ -17,7 +17,7 @@ export class TelegTestComponent implements OnInit {
   private _phone_hash = null;
   public phone_code = '';
 
-  constructor(private sanitization: DomSanitizer,
+  constructor(
     public telegAPIservice: TelegramAPIService,
     public http: HttpClient) { }
 

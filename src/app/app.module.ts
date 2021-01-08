@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -9,6 +9,19 @@ import { TelegramAPIService } from './service/telegram-api.service';
 import { TelegTestComponent } from './components/teleg-test/teleg-test.component';
 import { VkTestComponent } from './components/vk-test/vk-test.component';
 import {HttpClientJsonpModule, HttpClientModule} from '@angular/common/http';
+import { PerfectScrollbarConfigInterface, PerfectScrollbarModule, PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
+import { DateMessagePipe } from './pipes/date-message.pipe';
+import localeRu from '@angular/common/locales/ru';
+import { registerLocaleData } from '@angular/common';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {MatIconModule} from '@angular/material/icon';
+
+registerLocaleData(localeRu);
+
+const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
+  suppressScrollX: true
+};
+
 
 @NgModule({
   declarations: [
@@ -16,15 +29,30 @@ import {HttpClientJsonpModule, HttpClientModule} from '@angular/common/http';
     ToolbarComponent,
     TelegTestComponent,
     VkTestComponent,
+
+    DateMessagePipe,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
-    HttpClientJsonpModule
+    HttpClientJsonpModule,
+    MatIconModule,
+  
+
+    PerfectScrollbarModule,
+
+    BrowserAnimationsModule,
   ],
-  providers: [TelegramAPIService],
+  providers: [TelegramAPIService,
+    {
+      provide: PERFECT_SCROLLBAR_CONFIG,
+      useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
+    },
+    {
+      provide: LOCALE_ID, useValue: 'ru' 
+    }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

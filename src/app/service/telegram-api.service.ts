@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { MTProto } from '@mtproto/core';
 
 @Injectable({ providedIn: 'root' })
@@ -13,7 +14,9 @@ export class TelegramAPIService {
   public dialogs: any;
   public dialogList: any;
 
-  constructor() {
+  constructor(
+    private sanitization: DomSanitizer,
+  ) {
     this._mtProto = new MTProto({ api_hash: this._API_HASH, api_id: this._API_ID });
   }
 
@@ -61,13 +64,16 @@ export class TelegramAPIService {
         switch (mess.peer_id._) {
           case 'peerUser': {
             result.users.forEach((user: any) => {
+
               if (user.id === mess.peer_id.user_id) {
+                console.log(user)
                 dialogList.push({
                   type: 'user',
                   title: user.first_name,
-                  image: '',
+                  image: user.photo ? this._getImage(dialogList, index, mess.peer_id.user_id, user.access_hash, user.photo.photo_small.local_id, user.photo.photo_small.volume_id) : '',
                   message: mess.message,
                   count: result.dialogs[index].unread_count,
+                  date: mess.date,
                 });
               }
             });
@@ -82,6 +88,7 @@ export class TelegramAPIService {
                   image: '',
                   message: mess.message,
                   count: result.dialogs[index].unread_count,
+                  date: mess.date,
                 });
               }
             });
@@ -97,6 +104,7 @@ export class TelegramAPIService {
                   image: '',
                   message: mess.message,
                   count: result.dialogs[index].unread_count,
+                  date: mess.date,
                 });
               }
             });
@@ -108,7 +116,7 @@ export class TelegramAPIService {
       this.dialogList = dialogList;
       console.log(dialogList)
     });
-    const reader = new FileReader()
+
 
     /*
     this._mtProto.call('upload.getFile', {
@@ -133,6 +141,35 @@ export class TelegramAPIService {
       
     });
     */
+  }
+
+  private _getImage(dialogs: any, index: number, userID: number, accessHash: string, localID: number, volumeID: number) {
+    const reader = new FileReader()
+
+    this._mtProto.call('upload.getFile', {
+      limit: 524288,
+      location: {
+        _: 'inputPeerPhotoFileLocation',
+        peer: {
+          _: 'inputPeerUser',
+          user_id: userID,
+          access_hash: accessHash
+        },
+        local_id: localID,
+        volume_id: volumeID
+      }
+
+    }).then((result: any) => {
+      console.log(result);
+
+      reader.onload = (e: any) => {
+        let objectURL = 'data:image/jpeg;base64,' + e.target.result;
+        dialogs[index].image = this.sanitization.bypassSecurityTrustUrl(e.target.result);
+      };
+      reader.readAsDataURL(new Blob([result.bytes], { type: 'image/jpeg' }))
+
+    }, err => { console.log(err) });
+
   }
 
 }

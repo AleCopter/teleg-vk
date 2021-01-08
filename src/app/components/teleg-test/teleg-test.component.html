@@ -1,26 +1,34 @@
 <button class="but-send" (click)="sendCode()">
-    Отправить код
-  </button>
-  
-  <input type="number" [(ngModel)]="phone_code">
+  Отправить код
+</button>
 
-  <button class="but-in" (click)="authIn()">
-    Войти
-  </button>
-  
-  <button class="but-out">
-  
-  </button>
+<input type="number" [(ngModel)]="phone_code">
 
-  <button class="but-out" (click)="getContacts()">
-    Контакты
-  </button>
+<button class="but-in" (click)="authIn()">
+  Войти
+</button>
 
-  <img [src]='image' />
-  <div class="block" >
+<button class="but-out">
+
+</button>
+
+<button class="but-out" (click)="getContacts()">
+  Контакты
+</button>
+
+<img [src]='image' />
+
+<div class="block">
+  <perfect-scrollbar style="padding-right: 10px;">
+
     <div *ngFor="let d of telegAPIservice.dialogList" class="row">
       <div class="r-image">
-        <img src="https://i.pinimg.com/originals/37/9b/4a/379b4a87c8aa4e24c240e80420338f28.png">
+        <img *ngIf="d.image" [src]="d.image">
+        <div *ngIf="!d.image" class="r-i-icon">
+          <div class="r-i-i-text">
+            {{d.title.charAt(0)}}
+          </div>
+        </div>
       </div>
       <div class="r-text">
         <div class="r-t-title">
@@ -31,9 +39,12 @@
         </div>
       </div>
       <div class="r-info">
-        <div class="r-i-time"> 20:20</div>
-        <div class="r-i-count"> 1</div>
-      </div>
-   
+        <div class="r-i-time"> {{d.date | dateMessage}}</div>
+        <div class="r-i-count">
+          <span *ngIf="d.count !== 0">{{d.count}}</span>
         </div>
-  </div>
+      </div>
+    </div>
+
+  </perfect-scrollbar>
+</div>
