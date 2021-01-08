@@ -1,1 +1,11 @@
-<p>vk-test works!</p>
+<input type="number" [(ngModel)]="username">
+<input type="password" [(ngModel)]="password">
+<button style="height: 20px; width: 150px;" (click)="login()">Login</button>
+
+<button style="height: 20px; width: 150px;" (click)="test()">Send Message</button>
+<button style="height: 20px; width: 150px;" (click)="test()">Last Dialog</button>
+<div class="block" >
+  <div *ngFor="let d of dialogs?.items" class="row">
+    {{d.text}}
+  </div>
+</div>
