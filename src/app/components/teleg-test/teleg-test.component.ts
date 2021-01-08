@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TelegramAPIService } from 'src/app/service/telegram-api.service';
@@ -17,7 +18,8 @@ export class TelegTestComponent implements OnInit {
   public phone_code = '';
 
   constructor(private sanitization: DomSanitizer,
-    public telegAPIservice: TelegramAPIService,) { }
+    public telegAPIservice: TelegramAPIService,
+    public http: HttpClient) { }
 
   ngOnInit(): void {
   }
