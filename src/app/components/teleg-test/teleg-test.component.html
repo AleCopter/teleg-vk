@@ -1,0 +1,24 @@
+<button class="but-send" (click)="sendCode()">
+    Отправить код
+  </button>
+  
+  <input type="number" [(ngModel)]="phone_code">
+
+  <button class="but-in" (click)="authIn()">
+    Войти
+  </button>
+  
+  <button class="but-out">
+  
+  </button>
+
+  <button class="but-out" (click)="getContacts()">
+    Контакты
+  </button>
+
+  <img [src]='image' />
+  <div class="block" >
+    <div *ngFor="let d of telegAPIservice.dialogs?.messages" class="row">
+      {{d.message}}
+        </div>
+  </div>
