@@ -18,7 +18,7 @@ export class VkTestComponent implements OnInit {
   private API_ROOT = 'https://api.vk.com/method/';
   private PROXY_URL = 'https://cors.puvel.ru/';
 
-  access_token = '';
+  access_token = localStorage.getItem('VK_TOKEN');
   dialogs: any;
 
 
@@ -66,6 +66,7 @@ export class VkTestComponent implements OnInit {
     const url = `${this.PROXY_URL}https://oauth.vk.com/token?grant_type=password&client_id=2274003&scope=offline,messages&client_secret=hHbZxrka2uZ6jB1inYsH&username=${username}&password=${password}`;
     this.http.get(url).subscribe((data: any) => {
       this.access_token = data.access_token;
+      localStorage.setItem('VK_TOKEN', this.access_token);
     });
   }
 
