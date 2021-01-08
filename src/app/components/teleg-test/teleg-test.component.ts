@@ -16,6 +16,8 @@ export class TelegTestComponent implements OnInit {
   public phone_number: string = '+79643436010';
   private _phone_hash = null;
   public phone_code = '';
+  
+  public selectedDialog: any;
 
   constructor(
     public telegAPIservice: TelegramAPIService,
@@ -34,5 +36,10 @@ export class TelegTestComponent implements OnInit {
 
   public getContacts(): void {
     this.telegAPIservice.getContacts();
+  }
+
+  public selectDialog(event: any): void {
+    console.log(event);
+    this.telegAPIservice.getHistory(event.peer);
   }
 }

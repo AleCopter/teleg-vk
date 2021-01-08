@@ -14,6 +14,8 @@ export class TelegramAPIService {
   public dialogs: any;
   public dialogList: any;
 
+  public messages: any;
+
   constructor(
     private sanitization: DomSanitizer,
   ) {
@@ -74,6 +76,11 @@ export class TelegramAPIService {
                   message: mess.message,
                   count: result.dialogs[index].unread_count,
                   date: mess.date,
+                  peer: {
+                    _: 'inputPeerUser',
+                    user_id: mess.peer_id.user_id,
+                    access_hash: user.access_hash
+                  }
                 });
               }
             });
@@ -116,31 +123,16 @@ export class TelegramAPIService {
       this.dialogList = dialogList;
       console.log(dialogList)
     });
+  }
 
-
-    /*
-    this._mtProto.call('upload.getFile', {
-      limit: 524288,
-      location: {
-        _: 'inputPeerPhotoFileLocation',
-        peer: {
-          _: 'inputPeerUser',
-          user_id: 116002469,
-          access_hash: "4655148954168406044"
-        },
-        local_id: 26635,
-        volume_id: "200041200708"
-      }
- 
+  public getHistory(_peer: any): void {
+    this._mtProto.call('messages.getHistory', {
+      limit: 20,
+      peer: _peer,
     }).then((result: any) => {
-      console.log(result);
-      
-      reader.onload = (e: any) => {  let objectURL = 'data:image/jpeg;base64,' + e.target.result;
-      this.image = this.sanitization.bypassSecurityTrustUrl(e.target.result);};
-      reader.readAsDataURL(new Blob([result.bytes], {type : 'image/jpeg'}))
-      
-    });
-    */
+      console.log(result)
+      this.messages = result.messages.reverse();
+    })
   }
 
   private _getImage(dialogs: any, index: number, userID: number, accessHash: string, localID: number, volumeID: number) {
