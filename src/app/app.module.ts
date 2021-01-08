@@ -8,7 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { TelegramAPIService } from './service/telegram-api.service';
 import { TelegTestComponent } from './components/teleg-test/teleg-test.component';
 import { VkTestComponent } from './components/vk-test/vk-test.component';
-import { HttpClientModule } from '@angular/common/http';
+import {HttpClientJsonpModule, HttpClientModule} from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -22,6 +22,7 @@ import { HttpClientModule } from '@angular/common/http';
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
+    HttpClientJsonpModule
   ],
   providers: [TelegramAPIService],
   bootstrap: [AppComponent]
