@@ -16,10 +16,26 @@ export class TelegramAPIService {
 
   public messages: any;
 
+  private _currentUser: any;
+
   constructor(
     private sanitization: DomSanitizer,
   ) {
     this._mtProto = new MTProto({ api_hash: this._API_HASH, api_id: this._API_ID });
+    this.getUser();
+  }
+
+  public async getUser() {
+
+    this._mtProto.call('users.getFullUser', {
+      id: {
+        _: 'inputUserSelf',
+      },
+    }).then((result: any ) => {
+      console.log(result);
+      this._currentUser = result;
+    });
+
   }
 
   // Отправка кода для авторизации
@@ -96,6 +112,10 @@ export class TelegramAPIService {
                   message: mess.message,
                   count: result.dialogs[index].unread_count,
                   date: mess.date,
+                  peer: {
+                    _: 'inputPeerChat',
+                    chat_id: result.dialogs[index].peer.chat_id,
+                  }
                 });
               }
             });
@@ -112,6 +132,11 @@ export class TelegramAPIService {
                   message: mess.message,
                   count: result.dialogs[index].unread_count,
                   date: mess.date,
+                  peer: {
+                    _: 'inputPeerChannel',
+                    channel_id: result.dialogs[index].peer.channel_id,
+                    access_hash: channel.access_hash
+                  }
                 });
               }
             });
@@ -126,13 +151,36 @@ export class TelegramAPIService {
   }
 
   public getHistory(_peer: any): void {
+    console.log(_peer)
     this._mtProto.call('messages.getHistory', {
-      limit: 20,
+      limit: 50,
       peer: _peer,
     }).then((result: any) => {
       console.log(result)
+      /*
+      let newMess = [];
+      result.messages.forEach((mess: any) => {
+        newMess.push({
+          text: mess,
+          owner: 
+        })
+      });
+      */
       this.messages = result.messages.reverse();
     })
+  }
+
+  // message
+
+  public sendMessage(_peer: any, _message: string): void {
+    this._mtProto.call('messages.sendMessage', {
+      peer: _peer,
+      message: _message,
+      random_id: Math.floor(Math.random() * 1000)
+    }).then((result: any) => {
+      console.log(result)
+    })
+
   }
 
   private _getImage(dialogs: any, index: number, userID: number, accessHash: string, localID: number, volumeID: number) {

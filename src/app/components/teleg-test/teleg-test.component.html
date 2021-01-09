@@ -51,15 +51,18 @@
   <div class="chat-block">
     <perfect-scrollbar style="padding-right: 10px;">
       <div class="c-b-mid">
-        <div *ngFor="let m of telegAPIservice.messages" class="message-row">
-          <div class="m-r-text">
+        <div *ngFor="let m of telegAPIservice.messages" class="message-row" [ngSwitch]="m.out">
+          <div class="m-r-text__left" *ngSwitchCase="false">
+            {{m.message}}
+          </div>
+          <div class="m-r-text__right" *ngSwitchCase="true">
             {{m.message}}
           </div>
         </div>
       </div>
     </perfect-scrollbar>
     <div class="c-b-bot">
-      <textarea class="area" placeholder="Write a message..."></textarea>
+      <textarea class="area" placeholder="Write a message..." (keydown)="sendMessage($event)"></textarea>
     </div>
   </div>
 

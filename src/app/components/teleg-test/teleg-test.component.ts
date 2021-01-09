@@ -40,6 +40,20 @@ export class TelegTestComponent implements OnInit {
 
   public selectDialog(event: any): void {
     console.log(event);
+    this.selectedDialog = event;
     this.telegAPIservice.getHistory(event.peer);
+  }
+
+  public sendMessage(event: any): void {
+    switch(event.keyCode) {
+      case 13: {
+        console.log(event);
+        console.log(event.target.value)
+        this.telegAPIservice.sendMessage(this.selectedDialog.peer, event.target.value);
+        //event.target.value = "";
+        break;
+      }
+    }
+  
   }
 }

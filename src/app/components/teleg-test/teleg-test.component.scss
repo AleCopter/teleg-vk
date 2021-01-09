@@ -97,6 +97,7 @@
     
         .chat-block {
             height: 90vh;
+            width: 740px;
             padding: 12px;
             display: flex;
             flex-direction: column;        
@@ -105,10 +106,20 @@
                     min-height: 42px;
                     margin: 8px 0px;
                     .m-r-text {
-                        padding: 8px 10px;
-                        background-color: rgb(24, 38, 51);
-                        width: fit-content;
-                        border-radius: 10px;
+                        &__left {
+                            padding: 8px 10px;
+                            background-color: rgb(24, 38, 51);
+                            width: fit-content;
+                            border-radius: 10px;
+                            margin-right: auto;
+                        }
+                        &__right {
+                            padding: 8px 10px;
+                            background-color: #1d3952;;
+                            width: fit-content;
+                            border-radius: 10px;
+                            margin-left: auto;
+                        }
                     }
                 }
             }
