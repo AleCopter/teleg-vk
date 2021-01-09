@@ -1,0 +1,59 @@
+<div class="block">
+    <div class="header">
+        <mat-icon>
+            how_to_reg
+        </mat-icon>
+        <div class="text">
+            Учетные записи
+        </div>
+
+
+    </div>
+
+    <div class="accounts">
+        <div class="a-row">
+            <mat-icon svgIcon="vk"></mat-icon>
+            <div class="a-r-body">
+                <div class="b-header">
+                    ВКонтакте <span> ({{status.vk.name}}) </span>
+                </div>
+                <div class="b-actions" [ngSwitch]="status.vk.status">
+                    <button class="button-action button-action__in" *ngSwitchCase="false"> Войти</button>
+                    <button class="button-action button-action__out" *ngSwitchCase="true"> Выйти</button>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="a-row">
+            <mat-icon svgIcon="telegram"></mat-icon>
+            <div class="a-r-body">
+                <div class="b-header">
+                    Telegram <span> ({{status.telegram.name}}) </span>
+                </div>
+                <div class="b-actions" [ngSwitch]="status.telegram.status">
+                    <button class="button-action button-action__in" *ngSwitchCase="false" (click)="login(1,0)">
+                        Войти</button>
+                    <button class="button-action button-action__out" *ngSwitchCase="true" (click)="telegLogout()">
+                        Выйти</button>
+                    <button class="button-action" *ngIf="status.telegram.status"> Информация</button>
+                </div>
+            </div>
+        </div>
+        <div class="a-in" *ngIf="auth.media === 1 && auth.step === 0">
+            <span>Номер телефона:</span>
+            <input #phoneNumber type="text">
+            <button class="button-action" style="height: 26px;" (click)="telegSendPhone(phoneNumber.value)"> Отправить
+            </button>
+            <mat-icon svgIcon="spinnerLoad" *ngIf="isSend"></mat-icon>
+        </div>
+
+        <div class="a-in" *ngIf="auth.media === 1 && auth.step === 1">
+            <span>Код подтверждения:</span>
+            <input #telegCode type="text">
+            <button class="button-action" style="height: 26px;" (click)="telegLogin(telegCode.value)"> Отправить
+            </button>
+            <mat-icon svgIcon="spinnerLoad" *ngIf="isSend"></mat-icon>
+        </div>
+    </div>
+</div>

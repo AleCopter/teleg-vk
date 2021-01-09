@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { AuthService } from 'src/app/service/auth.service';
 import { TelegramAPIService } from 'src/app/service/telegram-api.service';
 
 @Component({
@@ -28,6 +29,7 @@ export class TelegTestComponent implements OnInit {
 
   constructor(
     public telegAPIservice: TelegramAPIService,
+    public authService: AuthService,
     public http: HttpClient,
     private _changeDetection: ChangeDetectorRef
   ) { }
@@ -51,11 +53,11 @@ export class TelegTestComponent implements OnInit {
   }
 
   public sendCode(): void {
-    this.telegAPIservice.sendCode(this.phone_number);
+    //this.telegAPIservice.sendCode(this.phone_number);
   }
 
   public authIn(): void {
-    this.telegAPIservice.authIn(this.phone_code, this.phone_number);
+    //this.telegAPIservice.authIn(this.phone_code, this.phone_number);
   }
 
   public getContacts(): void {

@@ -11,3 +11,18 @@
 }
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+.user-config {
+    mat-dialog-container {
+        padding: 14px;
+        background: #252526;
+        background-color: #182633;
+        box-shadow: 0px 0px 6px 3px #020c15;
+    }
+
+}
+
+.cdk-overlay-dark-backdrop {
+    background: rgba(0,0,0,.52);
+}

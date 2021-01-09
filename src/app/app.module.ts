@@ -15,6 +15,9 @@ import localeRu from '@angular/common/locales/ru';
 import { registerLocaleData } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatIconModule} from '@angular/material/icon';
+import { UserConfigComponent } from './core/user-config/user-config.component';
+import {MatDialogModule} from '@angular/material/dialog';
+import { AuthService } from './service/auth.service';
 
 registerLocaleData(localeRu);
 
@@ -31,6 +34,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     VkTestComponent,
 
     DateMessagePipe,
+    UserConfigComponent,
   ],
   imports: [
     BrowserModule,
@@ -40,12 +44,12 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     HttpClientJsonpModule,
     MatIconModule,
   
-
+    MatDialogModule,
     PerfectScrollbarModule,
 
     BrowserAnimationsModule,
   ],
-  providers: [TelegramAPIService,
+  providers: [TelegramAPIService, AuthService,
     {
       provide: PERFECT_SCROLLBAR_CONFIG,
       useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG

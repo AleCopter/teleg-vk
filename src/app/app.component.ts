@@ -14,6 +14,7 @@ export class AppComponent {
 
 
   constructor(
+    public telegAPIservice: TelegramAPIService,
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer
   ) {
@@ -21,6 +22,22 @@ export class AppComponent {
       `message`,
       this.domSanitizer.bypassSecurityTrustResourceUrl(`../assets/icon/speech-bubble.svg`),
     );
+
+    this.matIconRegistry.addSvgIcon(
+      `vk`,
+      this.domSanitizer.bypassSecurityTrustResourceUrl(`../assets/icon/vk.svg`),
+    );
+
+    this.matIconRegistry.addSvgIcon(
+      `telegram`,
+      this.domSanitizer.bypassSecurityTrustResourceUrl(`../assets/icon/telegram.svg`),
+    );
+
+    this.matIconRegistry.addSvgIcon(
+      `spinnerLoad`,
+      this.domSanitizer.bypassSecurityTrustResourceUrl(`../assets/icon/spinner-load.svg`),
+    );
+ 
   }
 
 }

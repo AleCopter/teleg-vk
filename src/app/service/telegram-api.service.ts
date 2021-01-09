@@ -10,8 +10,6 @@ export class TelegramAPIService {
   private _API_ID: number = 2942669;
   private _API_HASH: string = '29ffc2827385ddfd656ce969adb48f5e';
 
-  private _phone_hash = null;
-
   public dialogs: any;
   public dialogList: any;
 
@@ -24,44 +22,40 @@ export class TelegramAPIService {
   constructor(
     private sanitization: DomSanitizer,
   ) {
+    console.log('teleg');
     this._mtProto = new MTProto({ api_hash: this._API_HASH, api_id: this._API_ID });
-    this.getUser();
+    //this.getUser();
   }
 
-  public async getUser() {
-
-    this._mtProto.call('users.getFullUser', {
+  public getUser(): any {
+    return this._mtProto.call('users.getFullUser', {
       id: {
         _: 'inputUserSelf',
       },
-    }).then((result: any) => {
-      console.log(result);
-      this._currentUser = result;
     });
-
   }
 
   // Отправка кода для авторизации
 
-  public sendCode(phoneNumber: string): void {
-    this._mtProto.call('auth.sendCode', {
+  public sendCode(phoneNumber: string): any {
+    return this._mtProto.call('auth.sendCode', {
       phone_number: phoneNumber, settings: {
         _: 'codeSettings',
       },
-    }).then((result: any) => {
-      console.log(result);
-      this._phone_hash = result.phone_code_hash;
-    });
+    })
   }
 
-  public authIn(phoneCode: any, phoneNumber: string): void {
-    this._mtProto.call('auth.signIn', {
-      phone_code: phoneCode,
-      phone_number: phoneNumber,
-      phone_code_hash: this._phone_hash,
-    }).then((result: any) => {
-      console.log(result);
-    });
+  public login(_phone_code: any, _phone_number: string, _phone_hash: string): any {
+    return this._mtProto.call('auth.signIn', {
+      phone_code: _phone_code,
+      phone_number: _phone_number,
+      phone_code_hash: _phone_hash,
+    })
+  }
+
+  public logout(): any {
+    return this._mtProto.call('auth.logOut', {
+    })
   }
 
 
