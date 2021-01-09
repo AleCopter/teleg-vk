@@ -35,7 +35,7 @@
             {{d.title}}
           </div>
           <div class="r-t-message">
-            <span>user: </span>{{d.message}}
+            <span *ngIf="d.out">Вы: </span>{{d.message}}
           </div>
         </div>
         <div class="r-info">
@@ -49,9 +49,9 @@
   </div>
 
   <div class="chat-block">
-    <perfect-scrollbar style="padding-right: 10px;">
+    <perfect-scrollbar #scrollChat style="padding-right: 10px;" (psScrollUp)="scrollUp($event)">
       <div class="c-b-mid">
-        <div *ngFor="let m of telegAPIservice.messages" class="message-row" [ngSwitch]="m.out">
+        <div *ngFor="let m of messages" class="message-row" [ngSwitch]="m.out">
           <div class="m-r-text__left" *ngSwitchCase="false">
             {{m.message}}
           </div>

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MTProto } from '@mtproto/core';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class TelegramAPIService {
@@ -18,6 +19,8 @@ export class TelegramAPIService {
 
   private _currentUser: any;
 
+  public updateMessage = new BehaviorSubject(0);
+
   constructor(
     private sanitization: DomSanitizer,
   ) {
@@ -31,7 +34,7 @@ export class TelegramAPIService {
       id: {
         _: 'inputUserSelf',
       },
-    }).then((result: any ) => {
+    }).then((result: any) => {
       console.log(result);
       this._currentUser = result;
     });
@@ -89,6 +92,7 @@ export class TelegramAPIService {
                   type: 'user',
                   title: user.first_name,
                   image: user.photo ? this._getImage(dialogList, index, mess.peer_id.user_id, user.access_hash, user.photo.photo_small.local_id, user.photo.photo_small.volume_id) : '',
+                  out: mess.out,
                   message: mess.message,
                   count: result.dialogs[index].unread_count,
                   date: mess.date,
@@ -109,6 +113,7 @@ export class TelegramAPIService {
                   type: 'chat',
                   title: chat.title,
                   image: '',
+                  out: mess.out,
                   message: mess.message,
                   count: result.dialogs[index].unread_count,
                   date: mess.date,
@@ -129,6 +134,7 @@ export class TelegramAPIService {
                   type: 'channel',
                   title: channel.title,
                   image: '',
+                  out: mess.out,
                   message: mess.message,
                   count: result.dialogs[index].unread_count,
                   date: mess.date,
@@ -150,13 +156,14 @@ export class TelegramAPIService {
     });
   }
 
-  public getHistory(_peer: any): void {
-    console.log(_peer)
+  public getHistory(_peer: any, _add_offset?: number): void {
+    //console.log(_peer)
     this._mtProto.call('messages.getHistory', {
-      limit: 50,
+      limit: 20,
+      add_offset: _add_offset ? _add_offset : 0,
       peer: _peer,
     }).then((result: any) => {
-      console.log(result)
+      //console.log(result)
       /*
       let newMess = [];
       result.messages.forEach((mess: any) => {
@@ -166,7 +173,8 @@ export class TelegramAPIService {
         })
       });
       */
-      this.messages = result.messages.reverse();
+     console.log('ssss');
+      this.updateMessage.next(result.messages);
     })
   }
 
