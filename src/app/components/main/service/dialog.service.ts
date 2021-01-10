@@ -7,14 +7,16 @@ import { VkAPIService } from 'src/app/service/vk-api.service';
 export interface Dialog {
     source: string;
     type: string;
-    image: string,
+    image: any,
     title: string;
     out: boolean;
     message: string;
     peer: {
         _: string,
-        channel_id: number,
-        access_hash: string,
+        user_id?: number,
+        chat_id?: number,
+        channel_id?: number,
+        access_hash?: string,
     },
     count: number,
     date: number,
@@ -23,23 +25,7 @@ export interface Dialog {
 @Injectable({ providedIn: 'root' })
 export class DialogService {
 
-    public dialogList: Array<Dialog> = [
-        {
-            source: 'teleg',
-            type: "channel",
-            title: "СТАС БОМБИТ",
-            image: "", 
-            out: false,
-            message: "И мораль сей басни такова - каким бы ты охуевшим и…М. ↵↵↵ЧМОКИ↵↵P.S. опять прибухнул, не обессудьте.",
-            peer: {
-                _: "inputPeerChannel",
-                channel_id: 1046511458,
-                access_hash: "10344513225496364641",
-            },
-            count: 1,
-            date: 1610239047,
-        }
-    ];
+    public dialogList: Array<Dialog> = [];
     constructor(
         public telegAPIservice: TelegramAPIService,
         public vkAPIService: VkAPIService,
@@ -51,14 +37,50 @@ export class DialogService {
     public getDialog(): void {
         const m = forkJoin([this.vkAPIService.getConversations(), this.telegAPIservice.getConversations()]);
         m.subscribe(([result1, result2]) => {
+            let dialogVk: Array<Dialog> = this._formDialogVk(result1);
+            let dialogTeleg: Array<Dialog> = this._formDialogTeleg(result2);
+            let dialogs: Array<Dialog> = dialogVk.concat(dialogTeleg);
             console.log(result1)
             console.log(result2)
-            this.dialogList = this._formDialogTeleg(result2);
+            this.dialogList = dialogs.sort((a, b) => { 
+                if (a.date < b.date) {
+                    return 1;
+                }
+                if (a.date > b.date) {
+                    return -1;
+                }
+                return 0;
+            })
+
         });
     }
 
+    private _formDialogVk(result: any): Array<Dialog> {
+        let dialogList: Array<Dialog> = [];
+        result.response.items.forEach((mess: any, index: number) => {
+            console.log(mess);
+            result.response.profiles.forEach((user: any) => {
+                if (user.id === mess.conversation.peer.id) {
+                    dialogList.push({
+                        source: 'vk',
+                        type: 'user',
+                        title: user.first_name + ' ' + user.last_name,
+                        image: this.vkAPIService.getImage(dialogList, index, user.photo_50),
+                        out: mess.last_message.out ? true : false,
+                        message: mess.last_message.text,
+                        count: 0,
+                        date: mess.last_message.date,
+                        peer: mess.conversation.peer,
+                    })
+                }
+            });
+
+        });
+        return dialogList;
+    }
+
     private _formDialogTeleg(result: any): Array<any> {
-        let dialogList: Array<any> = [];
+        let dialogList: Array<Dialog> = [];
         result.messages.forEach((mess: any, index: number) => {
             //console.log(mess)
             switch (mess.peer_id._) {
@@ -68,10 +90,10 @@ export class DialogService {
                         if (user.id === mess.peer_id.user_id) {
                             //console.log(user)
                             dialogList.push({
+                                source: 'telegram',
                                 type: 'user',
                                 title: user.first_name,
-                                //image: user.photo ? this._getImage(dialogList, index, mess.peer_id.user_id, user.access_hash, user.photo.photo_small.local_id, user.photo.photo_small.volume_id) : '',
-                                image: '',
+                                image: user.photo ? this.telegAPIservice._getImage(dialogList, index, mess.peer_id.user_id, user.access_hash, user.photo.photo_small.local_id, user.photo.photo_small.volume_id) : '',
                                 out: mess.out,
                                 message: mess.message,
                                 count: result.dialogs[index].unread_count,
@@ -90,6 +112,7 @@ export class DialogService {
                     result.chats.forEach((chat: any) => {
                         if (chat.id === mess.peer_id.chat_id) {
                             dialogList.push({
+                                source: 'telegram',
                                 type: 'chat',
                                 title: chat.title,
                                 image: '',
@@ -111,6 +134,7 @@ export class DialogService {
                     result.chats.forEach((channel: any) => {
                         if (channel.id === mess.peer_id.channel_id) {
                             dialogList.push({
+                                source: 'telegram',
                                 type: 'channel',
                                 title: channel.title,
                                 image: '',

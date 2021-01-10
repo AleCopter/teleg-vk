@@ -19,19 +19,20 @@
                 display: flex;
                 margin-right: 8px;
                 img {
-                    width: 40px;
-                    height: 40px;
+                    width: 48px;
+                    height: 48px;
                     margin: auto;
                     border-radius: 24px;
                 }
                 .r-i-icon {
                     margin: auto;
-                    width: 40px;
-                    height: 40px;
+                    width: 48px;
+                    height: 48px;
                     background: #4CAF50;
                     border-radius: 24px;
                     display: flex;
                     .r-i-i-text {
+                        font-size: 20px;
                         margin: auto;
                     }
                 }
@@ -47,6 +48,10 @@
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
+                    mat-icon {
+                        width: 14px;
+                        height: 14px;
+                    }
                 }
                 .r-t-message {
                     margin: auto 0;

@@ -196,7 +196,7 @@ export class TelegramAPIService {
 
   }
 
-  private _getImage(dialogs: any, index: number, userID: number, accessHash: string, localID: number, volumeID: number) {
+  public _getImage(dialogs: any, index: number, userID: number, accessHash: string, localID: number, volumeID: number) {
     const reader = new FileReader()
 
     this._mtProto.call('upload.getFile', {
