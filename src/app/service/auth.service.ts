@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { TelegramAPIService } from './telegram-api.service';
 import { VkAPIService } from './vk-api.service';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -37,18 +37,13 @@ export class AuthService {
     console.log('auth');
     console.log(localStorage.getItem('VK_TOKEN'));
 
-    this.vkAPIService.getProfileInfo().subscribe(
-      (result: any) => {
-        console.log(result)
-        this.status.vk.name = result.response.first_name + ' ' + result.response.last_name;
-        this.status.vk.status = true;
-      }
-    )
-    this._getProfile();
+
+    this._getProfileTeleg();
+    this._getProfileVk();
   }
 
 
-  private _getProfile(): void {
+  private _getProfileTeleg(): void {
     this.telegAPIservice.getUser().then((result: any) => {
       this.status.telegram.status = true;
       this.status.telegram.name = result.user.first_name
@@ -56,8 +51,8 @@ export class AuthService {
     }).catch((err: any) => {
       this.status.telegram.status = false;
       this.status.telegram.name = 'Требуется авторизация';
-      console.log(err);
     });
+
   }
 
   public telegGetCode(number: string): void {
@@ -81,7 +76,7 @@ export class AuthService {
 
   public telegLogin(_code: number): void {
     this.telegAPIservice.login(_code, this._teleg_phone_number, this._teleg_phone_hash).then((result: any) => {
-      this._getProfile();
+      this._getProfileTeleg();
       this.updateAuth.next({
         media: -1,
         step: -1,
@@ -100,13 +95,12 @@ export class AuthService {
 
   public telegLogout(): void {
     this.telegAPIservice.logout().then((result: any) => {
-      this._getProfile();
+      this._getProfileTeleg();
       this.updateAuth.next({
         media: -1,
         step: -1,
         err: null
       })
-      console.log(result);
     }).catch((err: any) => {
       this.updateAuth.next({
         media: -1,
@@ -117,6 +111,42 @@ export class AuthService {
   }
 
   // -------------------- VK ------------------------
+
+  private _getProfileVk(): void {
+    this.vkAPIService.getProfileInfo().subscribe(
+      (result: any) => {
+        console.log(result)
+        console.log()
+        switch(Object.keys(result)[0]) {
+          case 'dwdw': {
+            this.status.vk.name = result.response.first_name + ' ' + result.response.last_name;
+            this.status.vk.status = true;
+            this.updateAuth.next({
+              media: -1,
+              step: -1,
+              err: null
+            })
+            break;
+          }
+          case 'error': {
+            this.status.vk.status = false;
+            this.status.vk.name = 'Требуется авторизация';
+            this.updateAuth.next({
+              media: -1,
+              step: -1,
+              err: null
+            })
+            break;
+          }
+        }
+      },
+    )
+  }
+
+  public vkLogout(): void {
+    localStorage.removeItem('VK_TOKEN');
+    this._getProfileVk();
+  }
 
   private _API_ROOT = 'https://api.vk.com/method/';
   private _PROXY_URL = 'https://cors.puvel.ru/';
@@ -143,7 +173,7 @@ export class AuthService {
     return `https://oauth.vk.com/token?grant_type=password&client_id=2274003&scope=offline,messages&client_secret=hHbZxrka2uZ6jB1inYsH&username=${username}&password=${password}`;
   }
 
-  public parseToken(data: string): string|undefined {
+  public parseToken(data: string): string | undefined {
     return data.split('"').find(x => x.length === 85);
   }
 

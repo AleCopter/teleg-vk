@@ -18,10 +18,24 @@
                     ВКонтакте <span> ({{status.vk.name}}) </span>
                 </div>
                 <div class="b-actions" [ngSwitch]="status.vk.status">
-                    <button class="button-action button-action__in" *ngSwitchCase="false"> Войти</button>
-                    <button class="button-action button-action__out" *ngSwitchCase="true"> Выйти</button>
+                    <button class="button-action button-action__in" *ngSwitchCase="false" (click)="login(0,0)"> Войти</button>
+                    <button class="button-action button-action__out" *ngSwitchCase="true" (click)="vkLogout()"> Выйти</button>
                 </div>
             </div>
+        </div>
+
+        <div class="a-in" *ngIf="auth.media === 0 && auth.step === 0">
+            <span>Логин/телефон:</span>
+            <input #phoneNumber type="text">
+            <mat-icon svgIcon="spinnerLoad" *ngIf="isSend"></mat-icon>
+        </div>
+
+        <div class="a-in" *ngIf="auth.media === 0 && auth.step === 0">
+            <span>Пароль:</span>
+            <input #telegCode type="password">
+            <button class="button-action" style="height: 26px;" (click)="telegLogin(telegCode.value)"> Отправить
+            </button>
+            <mat-icon svgIcon="spinnerLoad" *ngIf="isSend"></mat-icon>
         </div>
 
 

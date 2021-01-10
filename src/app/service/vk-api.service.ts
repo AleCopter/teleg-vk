@@ -25,6 +25,12 @@ export class VkAPIService {
     return this._apiRequest('account.getProfileInfo');
   }
 
+  // -------------------- Auth ------------------------
+
+  
+
+  // --------------------  ------------------------
+
   public getConversations(offset: number = 0, count: number = 20): Observable<any> {
     return this._apiRequest('messages.getConversations', `extended=1&offset=${offset}&count=${count}`);
   }
@@ -33,7 +39,7 @@ export class VkAPIService {
     return this._apiRequest('messages.getHistory', `extended=1&peer_id=${peer_id}&offset=${offset}&count=${count}`);
   }
 
-  public _apiRequest(method: string, params: string = ''): Observable<any> {
+  private _apiRequest(method: string, params: string = ''): Observable<any> {
     const url = `${this.proxy ? this._PROXY_URL : ''}${this._API_ROOT}${method}?v=5.126&access_token=${this.access_token}&${params}`;
     return this.http.jsonp(url, 'callback');
   }

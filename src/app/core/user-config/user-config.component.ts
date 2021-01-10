@@ -55,6 +55,13 @@ export class UserConfigComponent implements OnInit {
     this.authService.telegLogout();
   } 
 
+  //
+
+  public vkLogout(): void {
+    this.isSend = true;
+    this.authService.vkLogout();
+  }
+
   ngOnInit(): void {
   }
 
