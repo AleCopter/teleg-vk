@@ -1,6 +1,11 @@
 <div class="block">
-    <perfect-scrollbar style="padding-right: 10px;">
+  <div class="block-header">
+  </div>
 
+    <perfect-scrollbar style="padding-right: 10px">
+      <div class="space">
+
+      </div>
       <div *ngFor="let d of dialogService.dialogList; let i = index" class="row" (click)="selectDialog(d)">
         <div class="r-image">
           <img *ngIf="d.image" [src]="d.image">
@@ -8,6 +13,9 @@
             <div class="r-i-i-text">
               {{ getNameIcon(d.title) }}
             </div>
+          </div>
+          <!-- [style.background]="'red'" -->
+          <div class="r-i-icon-back" [style.background]="getSource(d.source)">
           </div>
         </div>
         <div class="r-text">
@@ -21,10 +29,13 @@
         <div class="r-info">
           <div class="r-i-time"> {{d.date | dateMessage}}</div>
           <div class="r-i-count">
-            <div *ngIf="d.user" [ngClass]="{'r-t-t-status': true, 'r-t-t-status__true': d.user.online, 'r-t-t-status__false': !d.user.online}"></div>
+            <div *ngIf="d.user"
+              [ngClass]="{'r-t-t-status': true, 'r-t-t-status__true': d.user.online, 'r-t-t-status__false': !d.user.online}">
+            </div>
             <span *ngIf="d.count !== 0">{{d.count}}</span>
           </div>
         </div>
       </div>
     </perfect-scrollbar>
-  </div>
+
+</div>

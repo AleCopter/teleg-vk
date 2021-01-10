@@ -48,6 +48,21 @@ export class DialogPanelComponent implements OnInit {
     let charIndex = initials.charCodeAt(0) - 65;
     let colorIndex = charIndex % 19;
     return colors[colorIndex];
+  }
 
+  public getSource(name: string): string {
+    console.log(name)
+    let color: string = 'white';
+    switch(name) {
+      case 'vk': {
+        color = '#2196F3';
+        break;
+      }
+      case 'telegram': {
+        color = '#673AB7';
+        break;
+      }
+    }
+    return color;
   }
 }

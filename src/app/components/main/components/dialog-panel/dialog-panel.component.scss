@@ -3,6 +3,20 @@
     .block {
         width: 550px;
         height: 100%;
+        display: flex;
+        flex-direction: column;
+        .block-header {
+            width: 558px;
+            height: 60px;
+            box-shadow: 1px 1px 10px 1px black;
+            z-index: 10;
+        }
+        .space {
+            height: 4px;
+            border: beige;
+            width: 100%;
+            background: #17212b;
+        }
         .row {
             overflow: auto;
             padding: 8px;
@@ -15,14 +29,17 @@
             display: flex;
             flex-direction: row;
             .r-image {
-                width: 52px;
+                width: 54px;
                 display: flex;
-                margin-right: 8px;
+                margin: 0px 8px;
+                position: relative;
                 img {
                     width: 48px;
                     height: 48px;
                     margin: auto;
                     border-radius: 24px;
+                    z-index: 10;
+                    box-shadow: 0px 0px 6px 3px black;
                 }
                 .r-i-icon {
                     margin: auto;
@@ -31,15 +48,31 @@
                     background: #4CAF50;
                     border-radius: 24px;
                     display: flex;
+                    z-index: 10;
+                    box-shadow: 0px 0px 6px 3px black;
                     .r-i-i-text {
                         font-size: 20px;
                         margin: auto;
                     }
                 }
+
+                .r-i-icon-back {
+                    top: -4px;
+                    left: -5px;
+                    width: 52px;
+                    height: 52px;
+                    font-size: 7px;
+                    box-shadow: 0px 0px 4px 2px black;
+                    z-index: 9;
+                    position: absolute;
+                    margin: auto;
+                    border-radius: 30px;
+                    display: flex;
+                }
             }
 
             .r-text {
-                width: calc(100% - 166px);
+                width: calc(100% - 176px);
                 
                 display: flex;
                 flex-direction: column;
