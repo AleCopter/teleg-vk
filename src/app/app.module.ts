@@ -19,6 +19,9 @@ import { UserConfigComponent } from './core/user-config/user-config.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import { AuthService } from './service/auth.service';
 import { VkAPIService } from './service/vk-api.service';
+import { DialogService } from './components/main/service/dialog.service';
+import { MainComponent } from './components/main/main.component';
+import { DialogPanelComponent } from './components/main/components/dialog-panel/dialog-panel.component';
 
 registerLocaleData(localeRu);
 
@@ -36,6 +39,8 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
 
     DateMessagePipe,
     UserConfigComponent,
+    MainComponent,
+    DialogPanelComponent,
   ],
   imports: [
     BrowserModule,
@@ -50,7 +55,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
 
     BrowserAnimationsModule,
   ],
-  providers: [TelegramAPIService, VkAPIService, AuthService, 
+  providers: [TelegramAPIService, VkAPIService, DialogService, AuthService, 
     {
       provide: PERFECT_SCROLLBAR_CONFIG,
       useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG

@@ -1,0 +1,29 @@
+<div class="block">
+    <perfect-scrollbar style="padding-right: 10px;">
+
+      <div *ngFor="let d of dialogService.dialogList; let i = index" class="row" (click)="selectDialog(d)">
+        <div class="r-image">
+          <img *ngIf="d.image" [src]="d.image">
+          <div *ngIf="!d.image" class="r-i-icon">
+            <div class="r-i-i-text">
+              {{d.title.charAt(0)}}
+            </div>
+          </div>
+        </div>
+        <div class="r-text">
+          <div class="r-t-title">
+            {{d.title}}
+          </div>
+          <div class="r-t-message">
+            <span *ngIf="d.out">Вы: </span>{{d.message}}
+          </div>
+        </div>
+        <div class="r-info">
+          <div class="r-i-time"> {{d.date | dateMessage}}</div>
+          <div class="r-i-count">
+            <span *ngIf="d.count !== 0">{{d.count}}</span>
+          </div>
+        </div>
+      </div>
+    </perfect-scrollbar>
+  </div>

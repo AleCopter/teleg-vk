@@ -17,7 +17,6 @@ export class TelegTestComponent implements OnInit {
   access_hash = "5938841401524493444" // test
 
   public phone_number: string = '+79643436010';
-  private _phone_hash = null;
   public phone_code = '';
 
   public selectedDialog: any;
@@ -50,14 +49,6 @@ export class TelegTestComponent implements OnInit {
         }
       }
     })
-  }
-
-  public sendCode(): void {
-    //this.telegAPIservice.sendCode(this.phone_number);
-  }
-
-  public authIn(): void {
-    //this.telegAPIservice.authIn(this.phone_code, this.phone_number);
   }
 
   public getContacts(): void {

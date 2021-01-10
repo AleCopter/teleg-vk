@@ -59,6 +59,17 @@ export class TelegramAPIService {
   }
 
 
+  public getConversations(): Promise<any> {
+    return this._mtProto.call('messages.getDialogs', {
+      offset: 0,
+      max_id: 0,
+      limit: 100,
+      offset_peer: {
+        _: 'inputPeerEmpty',
+      }
+    })
+}
+
   public getContacts(): any {
     let dialogList: any = [];
     console.log(this._mtProto);
