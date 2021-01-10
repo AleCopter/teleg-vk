@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { TelegramAPIService } from './telegram-api.service';
+import { VkAPIService } from './vk-api.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  public status: any = {
+  public status = {
     vk: {
       status: false,
       name: 'Требуется авторизация',
@@ -29,8 +30,18 @@ export class AuthService {
 
   constructor(
     public telegAPIservice: TelegramAPIService,
+    public vkAPIService: VkAPIService,
   ) {
     console.log('auth');
+    console.log(localStorage.getItem('VK_TOKEN'));
+
+    this.vkAPIService.getProfileInfo().subscribe(
+      (result: any) => {
+        console.log(result)
+        this.status.vk.name = result.response.first_name + ' ' + result.response.last_name;
+        this.status.vk.status = true;
+      }
+    )
     this._getProfile();
   }
 

@@ -18,6 +18,7 @@ import {MatIconModule} from '@angular/material/icon';
 import { UserConfigComponent } from './core/user-config/user-config.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import { AuthService } from './service/auth.service';
+import { VkAPIService } from './service/vk-api.service';
 
 registerLocaleData(localeRu);
 
@@ -49,7 +50,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
 
     BrowserAnimationsModule,
   ],
-  providers: [TelegramAPIService, AuthService,
+  providers: [TelegramAPIService, VkAPIService, AuthService, 
     {
       provide: PERFECT_SCROLLBAR_CONFIG,
       useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
