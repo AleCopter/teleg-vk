@@ -20,12 +20,16 @@ export interface Dialog {
     },
     count: number,
     date: number,
+    user?: any,
 }
 
 @Injectable({ providedIn: 'root' })
 export class DialogService {
 
     public dialogList: Array<Dialog> = [];
+
+    public users: Array<any> = [];
+
     constructor(
         public telegAPIservice: TelegramAPIService,
         public vkAPIService: VkAPIService,
@@ -33,16 +37,22 @@ export class DialogService {
         this.getDialog();
     }
 
-
     public getDialog(): void {
         const m = forkJoin([this.vkAPIService.getConversations(), this.telegAPIservice.getConversations()]);
         m.subscribe(([result1, result2]) => {
+
+            this.users = this._formUserTeleg(result2.users);
+            console.log(this.users);
+
             let dialogVk: Array<Dialog> = this._formDialogVk(result1);
             let dialogTeleg: Array<Dialog> = this._formDialogTeleg(result2);
             let dialogs: Array<Dialog> = dialogVk.concat(dialogTeleg);
             console.log(result1)
             console.log(result2)
-            this.dialogList = dialogs.sort((a, b) => { 
+
+
+
+            this.dialogList = dialogs.sort((a, b) => {
                 if (a.date < b.date) {
                     return 1;
                 }
@@ -53,6 +63,22 @@ export class DialogService {
             })
 
         });
+    }
+
+    private _formUserTeleg(result: any): Array<any> {
+        let users: Array<any> = [];
+        console.log(result);
+
+        result.forEach((user: any) => {
+            if (user.status) {
+                users.push({
+                    id: user.id,
+                    online: user.status._ === 'userStatusOnline' ? true : false,
+                })
+            }
+        });
+
+        return users;
     }
 
     private _formDialogVk(result: any): Array<Dialog> {
@@ -71,6 +97,10 @@ export class DialogService {
                         count: mess.conversation.unread_count ? mess.conversation.unread_count : 0,
                         date: mess.last_message.date,
                         peer: mess.conversation.peer,
+                        user: {
+                            id: user.id,
+                            online: user.online ? true : false,
+                        }
                     })
                 }
             });
@@ -102,6 +132,10 @@ export class DialogService {
                                     _: 'inputPeerUser',
                                     user_id: mess.peer_id.user_id,
                                     access_hash: user.access_hash
+                                },
+                                user: {
+                                    id: user.id,
+                                    online: user.status._ === 'userStatusOnline' ? true : false,
                                 }
                             });
                         }

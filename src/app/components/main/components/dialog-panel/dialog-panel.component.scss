@@ -44,6 +44,7 @@
                 display: flex;
                 flex-direction: column;
                 .r-t-title {
+                    display: flex;
                     margin: auto 0;
                     white-space: nowrap;
                     overflow: hidden;
@@ -52,6 +53,7 @@
                         width: 14px;
                         height: 14px;
                     }
+
                 }
                 .r-t-message {
                     margin: auto 0;
@@ -67,25 +69,50 @@
                 width: 92px;
                 display: flex;
                 flex-direction: column;
+                position: relative;
                 .r-i-time {
                     margin: auto 0;
-                    color: #8696a8;;
+                    color: #8696a8;
                     font-size: 12px;
+                    width: 70px;
+                    text-align: center;
+                    height: 50px;
+                    line-height: 24px;
                 }
                 .r-i-count {
                     margin: auto 0;
                     width: 100%;
                     display: block;
                     font-weight: 700;
+                    font-family: monospace;
                     span {
                         display: inline-block;
                         background: #3e546a;
-                        min-width: 21px;
-                        padding: 4px;
-                        border-radius: 11px;
+                        min-width: 22px;
+                        padding: 0px 4px;
+                        border-radius: 4px;
                         font-size: 12px;
                         text-align: center;
-                        float: right;
+                        position: absolute;
+                        right: 1px;
+                        bottom: 4px;
+                    }
+
+                    .r-t-t-status {
+                        position: absolute;
+                        right: 0px;
+                        top: 7px;
+                        height: 10px;
+                        width: 10px;
+                        margin: auto 0;
+                        margin-right: 6px;
+                        border-radius: 10px;
+                        &__true  {
+                            background: #4CAF50; 
+                        }
+                        &__false {
+                            background: #F44336;
+                        }
                     }
                 }
             }

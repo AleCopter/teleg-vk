@@ -18,6 +18,7 @@ export class TelegramAPIService {
   private _currentUser: any;
 
   public updateMessage = new BehaviorSubject(0);
+  public updateDialogStatus = new BehaviorSubject(0);
 
   constructor(
     private sanitization: DomSanitizer,
@@ -25,6 +26,17 @@ export class TelegramAPIService {
     console.log('teleg');
     this._mtProto = new MTProto({ api_hash: this._API_HASH, api_id: this._API_ID });
     //this.getUser();
+
+    this._mtProto.updates.on('updateShort', (message: any) => {
+      const { update } = message;
+    
+      if (update._ === 'updateUserStatus') {
+        const { user_id, status } = update;
+    
+        console.log(`User with id ${user_id} change status to ${status}`);
+        console.log(status)
+      }
+    });
   }
 
   public getUser(): any {
