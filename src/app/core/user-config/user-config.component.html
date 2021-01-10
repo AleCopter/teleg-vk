@@ -24,19 +24,19 @@
             </div>
         </div>
 
-        <div class="a-in" *ngIf="auth.media === 0 && auth.step === 0">
-            <span>Логин/телефон:</span>
-            <input #phoneNumber type="text">
+        <div  class="a-in" *ngIf="auth.media === 0 && auth.step === 0">
+            <span >Логин/телефон:</span>
+            <input type="text" [(ngModel)]="vkLoginValue">
             <mat-icon svgIcon="spinnerLoad" *ngIf="isSend"></mat-icon>
         </div>
 
         <div class="a-in" *ngIf="auth.media === 0 && auth.step === 0">
             <span>Пароль:</span>
-            <input #telegCode type="password">
-            <button class="button-action" style="height: 26px;" (click)="telegLogin(telegCode.value)"> Отправить
+            <input #passwordVk type="password" [(ngModel)]="vkPasswordValue">
+            <button class="button-action" style="height: 26px;" (click)="vkLogin(vkLoginValue, vkPasswordValue)"> Отправить
             </button>
-            <mat-icon svgIcon="spinnerLoad" *ngIf="isSend"></mat-icon>
         </div>
+
 
 
         <div class="a-row">

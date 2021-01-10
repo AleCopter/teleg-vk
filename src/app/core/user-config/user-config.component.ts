@@ -17,6 +17,9 @@ export class UserConfigComponent implements OnInit {
 
   public isSend: boolean = false;
 
+  public vkLoginValue: string = '';
+  public vkPasswordValue: string = '';
+
   constructor(
     public authService: AuthService,
     public dialogRef: MatDialogRef<UserConfigComponent>,
@@ -55,7 +58,14 @@ export class UserConfigComponent implements OnInit {
     this.authService.telegLogout();
   } 
 
-  //
+  // -------------- vk ------------------
+
+
+  public vkLogin(login: string, password: string): void {
+    console.log(login + password);
+    this.isSend = true;
+    this.authService.vkLogin(login, password);
+  }
 
   public vkLogout(): void {
     this.isSend = true;

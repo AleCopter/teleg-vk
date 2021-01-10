@@ -117,8 +117,8 @@ export class AuthService {
       (result: any) => {
         console.log(result)
         console.log()
-        switch(Object.keys(result)[0]) {
-          case 'dwdw': {
+        switch (Object.keys(result)[0]) {
+          case 'response': {
             this.status.vk.name = result.response.first_name + ' ' + result.response.last_name;
             this.status.vk.status = true;
             this.updateAuth.next({
@@ -143,35 +143,36 @@ export class AuthService {
     )
   }
 
+  public vkLogin(login: string, password: string): void {
+    this.vkAPIService.login(login, password).subscribe(
+      (data: any) => {
+        localStorage.setItem('VK_TOKEN', data.access_token);
+        this.vkAPIService.access_token = data.access_token;
+        this._getProfileVk();
+        this.updateAuth.next({
+          media: -1,
+          step: -1,
+          err: null
+        })
+      },
+      (err: any) => {
+        this.updateAuth.next({
+          media: -1,
+          step: -1,
+          err: null
+        })
+      });
+  }
+
   public vkLogout(): void {
     localStorage.removeItem('VK_TOKEN');
+    this.vkAPIService.access_token = '';
     this._getProfileVk();
   }
 
   private _API_ROOT = 'https://api.vk.com/method/';
   private _PROXY_URL = 'https://cors.puvel.ru/';
   access_token = '';
-
-  public auth(username: string, password: string): void {
-    const url = `${this._PROXY_URL}${this.getAuthLink(username, password)}`;
-    this.http.get(url).subscribe((data: any) => {
-      this.access_token = data.access_token;
-      localStorage.setItem('VK_TOKEN', data.access_token);
-    });
-  }
-
-  public openAuthTab(username: string, password: string): void {
-    const win = window.open(this.getAuthLink(username, password), '_blank');
-    if (win) {
-      win.focus(); // Browser has allowed it to be opened
-    } else {
-      alert('Please allow popups for this website'); // Browser has blocked it
-    }
-  }
-
-  public getAuthLink(username: string, password: string): string {
-    return `https://oauth.vk.com/token?grant_type=password&client_id=2274003&scope=offline,messages&client_secret=hHbZxrka2uZ6jB1inYsH&username=${username}&password=${password}`;
-  }
 
   public parseToken(data: string): string | undefined {
     return data.split('"').find(x => x.length === 85);

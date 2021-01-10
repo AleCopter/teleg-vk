@@ -21,6 +21,24 @@ export class VkAPIService {
     );
   }
 
+  public login(username: string, password: string): Observable<any> {
+    const url = `${this._PROXY_URL}${this._getAuthLink(username, password)}`;
+    return this.http.get(url);
+  }
+
+  public openAuthTab(username: string, password: string): void {
+    const win = window.open(this._getAuthLink(username, password), '_blank');
+    if (win) {
+      win.focus(); // Browser has allowed it to be opened
+    } else {
+      alert('Please allow popups for this website'); // Browser has blocked it
+    }
+  }
+
+  private _getAuthLink(username: string, password: string): string {
+    return `https://oauth.vk.com/token?grant_type=password&client_id=2274003&scope=offline,messages&client_secret=hHbZxrka2uZ6jB1inYsH&username=${username}&password=${password}`;
+  }
+
   public getProfileInfo(): Observable<any> {
     return this._apiRequest('account.getProfileInfo');
   }
