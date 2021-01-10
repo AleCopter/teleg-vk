@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { TelegramAPIService } from './telegram-api.service';
 import { VkAPIService } from './vk-api.service';
+import {HttpClient} from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -31,6 +32,7 @@ export class AuthService {
   constructor(
     public telegAPIservice: TelegramAPIService,
     public vkAPIService: VkAPIService,
+    private http: HttpClient
   ) {
     console.log('auth');
     console.log(localStorage.getItem('VK_TOKEN'));
@@ -79,7 +81,7 @@ export class AuthService {
 
   public telegLogin(_code: number): void {
     this.telegAPIservice.login(_code, this._teleg_phone_number, this._teleg_phone_hash).then((result: any) => {
-      this._getProfile(); 
+      this._getProfile();
       this.updateAuth.next({
         media: -1,
         step: -1,
@@ -112,6 +114,44 @@ export class AuthService {
         err: err
       })
     });;
+  }
+
+  // -------------------- VK ------------------------
+
+  private _API_ROOT = 'https://api.vk.com/method/';
+  private _PROXY_URL = 'https://cors.puvel.ru/';
+  access_token = '';
+
+  public auth(username: string, password: string): void {
+    const url = `${this._PROXY_URL}${this.getAuthLink(username, password)}`;
+    this.http.get(url).subscribe((data: any) => {
+      this.access_token = data.access_token;
+      localStorage.setItem('VK_TOKEN', data.access_token);
+    });
+  }
+
+  public openAuthTab(username: string, password: string): void {
+    const win = window.open(this.getAuthLink(username, password), '_blank');
+    if (win) {
+      win.focus(); // Browser has allowed it to be opened
+    } else {
+      alert('Please allow popups for this website'); // Browser has blocked it
+    }
+  }
+
+  public getAuthLink(username: string, password: string): string {
+    return `https://oauth.vk.com/token?grant_type=password&client_id=2274003&scope=offline,messages&client_secret=hHbZxrka2uZ6jB1inYsH&username=${username}&password=${password}`;
+  }
+
+  public parseToken(data: string): string|undefined {
+    return data.split('"').find(x => x.length === 85);
+  }
+
+  public tryAPI(): Promise<any> {
+    const url = `${this._API_ROOT}messages.getConversations?v=5.126`;
+    const obs = this.http.jsonp(url, 'callback');
+    // obs.toPromise().then(() => console.log(`true`)).catch(() => console.log(`false`));
+    return obs.toPromise();
   }
 
 }

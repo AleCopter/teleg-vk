@@ -1,37 +1,40 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class VkAPIService {
 
-    private _API_ROOT = 'https://api.vk.com/method/';
-    private _PROXY_URL = 'https://cors.puvel.ru/';
+  private _API_ROOT = 'https://api.vk.com/method/';
+  private _PROXY_URL = 'https://cors.puvel.ru/';
 
-    access_token = localStorage.getItem('VK_TOKEN');
+  proxy = false;
+  access_token = localStorage.getItem('VK_TOKEN');
 
-    constructor(
-        private http: HttpClient
-    ) { 
-        this.getConversations().subscribe(
-            (data: any) => {
-                console.log(data);
-            }
-        )
-    }
-
-
-    public getProfileInfo(): Observable<any> {
-        const url = `${this._API_ROOT}account.getProfileInfo?v=5.126&access_token=${this.access_token}&`;
-        return this.http.jsonp(url, 'callback');
-    }
-
-    public getConversations(): Observable<any> {
-        return this._proxyRequest('messages.getConversations', '');
-    }
-
-    public _proxyRequest(method: string, params: string): Observable<any> {
-        const url = `${this._PROXY_URL}${this._API_ROOT}${method}?v=5.126&access_token=${this.access_token}&${params}`;
-        return this.http.get(url);
+  constructor(
+    private http: HttpClient
+  ) {
+    this.getConversations().subscribe(
+      (data: any) => {
+        console.log(data);
       }
+    );
+  }
+
+  public getProfileInfo(): Observable<any> {
+    return this._apiRequest('account.getProfileInfo');
+  }
+
+  public getConversations(offset: number = 0, count: number = 20): Observable<any> {
+    return this._apiRequest('messages.getConversations', `extended=1&offset=${offset}&count=${count}`);
+  }
+
+  public getMessages(peer_id: string, offset: number = 0, count: number = 20): Observable<any> {
+    return this._apiRequest('messages.getHistory', `extended=1&peer_id=${peer_id}&offset=${offset}&count=${count}`);
+  }
+
+  public _apiRequest(method: string, params: string = ''): Observable<any> {
+    const url = `${this.proxy ? this._PROXY_URL : ''}${this._API_ROOT}${method}?v=5.126&access_token=${this.access_token}&${params}`;
+    return this.http.get(url);
+  }
 }
