@@ -25,12 +25,25 @@ export class VkAPIService {
     return this._apiRequest('account.getProfileInfo');
   }
 
-  public getConversations(offset: number = 0, count: number = 20): Observable<any> {
-    return this._apiRequest('messages.getConversations', `extended=1&offset=${offset}&count=${count}`);
+  public getConversations(page: number = 0, count: number = 50): Observable<any> {
+    return this._apiRequest('messages.getConversations', `extended=1&offset=${page * count}&count=${count}`);
   }
 
-  public getMessages(peer_id: string, offset: number = 0, count: number = 20): Observable<any> {
-    return this._apiRequest('messages.getHistory', `extended=1&peer_id=${peer_id}&offset=${offset}&count=${count}`);
+  public getMessagesFirst(peer_id: string): Observable<any> {
+    return this.getMessages(peer_id); // return first N messages from dialog
+  }
+
+  public getMessagesContinue(peer_id: string, start_message_id: number, page: number = 0): Observable<any> {
+    return this.getMessages(peer_id, start_message_id, page, true); // return next N messages from dialog after message_id, pageable
+  }
+
+  public getMessages(peer_id: string,
+                     start_message_id: number = 0, page: number = 0, shift: boolean = false, count: number = 50): Observable<any> {
+    // shift = skip message with start_message_id (dont return itself)
+    const offset = page * count + (shift ? 1 : 0);
+    const smi = start_message_id !== 0 ? ('&start_message_id=' + start_message_id) : '';
+    return this._apiRequest('messages.getHistory',
+      `extended=1&peer_id=${peer_id}&offset=${offset}&count=${count}${smi}`);
   }
 
   public _apiRequest(method: string, params: string = ''): Observable<any> {
