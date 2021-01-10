@@ -68,7 +68,7 @@ export class DialogService {
                         image: this.vkAPIService.getImage(dialogList, index, user.photo_50),
                         out: mess.last_message.out ? true : false,
                         message: mess.last_message.text,
-                        count: 0,
+                        count: mess.conversation.unread_count ? mess.conversation.unread_count : 0,
                         date: mess.last_message.date,
                         peer: mess.conversation.peer,
                     })
