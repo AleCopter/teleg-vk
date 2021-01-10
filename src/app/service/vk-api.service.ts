@@ -35,6 +35,6 @@ export class VkAPIService {
 
   public _apiRequest(method: string, params: string = ''): Observable<any> {
     const url = `${this.proxy ? this._PROXY_URL : ''}${this._API_ROOT}${method}?v=5.126&access_token=${this.access_token}&${params}`;
-    return this.http.get(url);
+    return this.http.jsonp(url, 'callback');
   }
 }
