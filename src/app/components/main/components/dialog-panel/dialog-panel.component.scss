@@ -32,6 +32,7 @@
                 width: 54px;
                 display: flex;
                 margin: 0px 8px;
+                margin: 0px 10px 0px 8px;
                 position: relative;
                 img {
                     width: 48px;
@@ -58,16 +59,15 @@
 
                 .r-i-icon-back {
                     top: -4px;
-                    left: -5px;
-                    width: 52px;
-                    height: 52px;
+                    left: -11px;
+                    width: 70px;
+                    height: 56px;
                     font-size: 7px;
-                    box-shadow: 0px 0px 4px 2px black;
-                    z-index: 9;
                     position: absolute;
                     margin: auto;
-                    border-radius: 30px;
                     display: flex;
+                    border-top-right-radius: 22px;
+                    border-bottom-right-radius: 22px;
                 }
             }
 

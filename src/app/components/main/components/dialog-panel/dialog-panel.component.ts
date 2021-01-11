@@ -55,11 +55,11 @@ export class DialogPanelComponent implements OnInit {
     let color: string = 'white';
     switch(name) {
       case 'vk': {
-        color = '#2196F3';
+        color = 'linear-gradient(90deg, #2196F3 30%, transparent 100%)';
         break;
       }
       case 'telegram': {
-        color = '#673AB7';
+        color = 'linear-gradient(90deg, #673AB7 30%, transparent 100%)'
         break;
       }
     }
