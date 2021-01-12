@@ -1,0 +1,28 @@
+<div class="r-image">
+    <img *ngIf="d.image" [src]="d.image">
+    <div *ngIf="!d.image" class="r-i-icon" [style.background]="getColorIcon(d.title)">
+      <div class="r-i-i-text">
+        {{ getNameIcon(d.title) }}
+      </div>
+    </div>
+    <!-- [style.background]="'red'" -->
+    <div class="r-i-icon-back" [style.background]=" getSource(d.source)">
+    </div>
+  </div>
+  <div class="r-text">
+    <div class="r-t-title">
+      {{d.title}}
+    </div>
+    <div class="r-t-message">
+      <span *ngIf="d.out">Вы: </span>{{d.message}}
+    </div>
+  </div>
+  <div class="r-info">
+    <div class="r-i-time"> {{d.date | dateMessage}}</div>
+    <div class="r-i-count">
+      <div *ngIf="d.user"
+        [ngClass]="{'r-t-t-status': true, 'r-t-t-status__true': d.user.online, 'r-t-t-status__false': !d.user.online}">
+      </div>
+      <span *ngIf="d.count !== 0">{{d.count}}</span>
+    </div>
+  </div>

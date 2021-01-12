@@ -1,6 +1,6 @@
 
 import { Injectable } from '@angular/core';
-import { forkJoin, merge } from 'rxjs';
+import { BehaviorSubject, forkJoin, merge } from 'rxjs';
 import { TelegramAPIService } from 'src/app/service/telegram-api.service';
 import { VkAPIService } from 'src/app/service/vk-api.service';
 
@@ -30,6 +30,10 @@ export class DialogService {
 
     public users: Array<any> = [];
 
+    public updateStatus = this.telegAPIservice.updateDialogStatus;
+    public updateMessage = this.telegAPIservice.updateDialogMessage;
+    public updateChanges = new BehaviorSubject(false);
+
     constructor(
         public telegAPIservice: TelegramAPIService,
         public vkAPIService: VkAPIService,
@@ -37,20 +41,25 @@ export class DialogService {
         this.getDialog();
     }
 
+    public swapDialog(index: number): void {
+        if (index !== 0) {
+            let dialog = this.dialogList[0];
+            this.dialogList[0] = this.dialogList[index];
+            this.dialogList[index] = dialog;
+            console.log(this.dialogList)
+            this.updateChanges.next(true);
+        }
+    }
+
     public getDialog(): void {
         const m = forkJoin([this.vkAPIService.getConversations(), this.telegAPIservice.getConversations()]);
         m.subscribe(([result1, result2]) => {
-
             this.users = this._formUserTeleg(result2.users);
-            console.log(this.users);
-
             let dialogVk: Array<Dialog> = this._formDialogVk(result1);
             let dialogTeleg: Array<Dialog> = this._formDialogTeleg(result2);
             let dialogs: Array<Dialog> = dialogVk.concat(dialogTeleg);
             console.log(result1)
             console.log(result2)
-
-
 
             this.dialogList = dialogs.sort((a, b) => {
                 if (a.date < b.date) {

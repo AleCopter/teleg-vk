@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MTProto } from '@mtproto/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
@@ -18,14 +18,14 @@ export class TelegramAPIService {
   private _currentUser: any;
 
   public updateMessage = new BehaviorSubject(0);
-  public updateDialogStatus = new BehaviorSubject(0);
+  public updateDialogStatus = new BehaviorSubject({ id: 0, source: 'none', online: false });
+  public updateDialogMessage = new BehaviorSubject({ id: 0, source: 'none', message: '', date: 0 })
 
   constructor(
     private sanitization: DomSanitizer,
   ) {
     console.log('teleg');
     this._mtProto = new MTProto({ api_hash: this._API_HASH, api_id: this._API_ID });
-    //this.getUser();
 
     this._mtProto.updates.on('updateShort', (message: any) => {
       const { update } = message;
@@ -35,9 +35,38 @@ export class TelegramAPIService {
     
         console.log(`User with id ${user_id} change status to ${status}`);
         console.log(status)
+
+        switch(status._) {
+          case 'userStatusOnline': {
+            this.updateDialogStatus.next({id: user_id, source: "telegram", online: true})
+            break;
+          }
+          default: {
+            this.updateDialogStatus.next({id: user_id, source: "telegram", online: false})
+            break;
+          }
+        } 
       }
     });
+
+    this._mtProto.updates.on('updateShortMessage', (data: any) => {
+      this.updateDialogMessage.next({id: data.user_id, source: "telegram", message: data.message, date: data.date });
+    });
+
+    this._mtProto.updates.on('updates', (data: any) => {
+      console.log(data)
+      data.updates.forEach((up: any) => {
+        switch(up._) {
+          case 'updateNewMessage': {
+            this.updateDialogMessage.next({id: up.message.peer_id.user_id, source: "telegram", message: up.message.message, date: up.message.date})
+            break;
+          }
+        } 
+      });
+    });
+
   }
+
 
   public getUser(): any {
     return this._mtProto.call('users.getFullUser', {
@@ -80,7 +109,7 @@ export class TelegramAPIService {
         _: 'inputPeerEmpty',
       }
     })
-}
+  }
 
   public getContacts(): any {
     let dialogList: any = [];
@@ -190,7 +219,7 @@ export class TelegramAPIService {
         })
       });
       */
-     console.log('ssss');
+      console.log('ssss');
       this.updateMessage.next(result.messages);
     })
   }

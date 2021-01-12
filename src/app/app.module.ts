@@ -22,6 +22,7 @@ import { VkAPIService } from './service/vk-api.service';
 import { DialogService } from './components/main/service/dialog.service';
 import { MainComponent } from './components/main/main.component';
 import { DialogPanelComponent } from './components/main/components/dialog-panel/dialog-panel.component';
+import { DialogRowComponent } from './components/main/components/dialog-panel/dialog-row/dialog-row.component';
 
 registerLocaleData(localeRu);
 
@@ -41,6 +42,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     UserConfigComponent,
     MainComponent,
     DialogPanelComponent,
+    DialogRowComponent,
   ],
   imports: [
     BrowserModule,
