@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChatService } from '../../service/chat.service';
 import { DialogService } from '../../service/dialog.service';
 
 @Component({
@@ -12,6 +13,7 @@ export class DialogPanelComponent implements OnInit {
 
   constructor(
     public dialogService: DialogService,
+    private _chatService: ChatService,
     private _changeDetection: ChangeDetectorRef,
   ) {
     this.dialogService.updateChanges.subscribe(
@@ -26,7 +28,8 @@ export class DialogPanelComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  public selectDialog(d: any): void {
+  public selectDialog(dialog: any): void {
+    this._chatService.selectDialog(dialog);
   }
 
   public test(): void {

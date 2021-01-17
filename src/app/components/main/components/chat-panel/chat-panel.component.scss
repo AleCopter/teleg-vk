@@ -6,29 +6,48 @@
     flex-direction: column;
     position: relative;
     margin: 0px 20px;
-    .c-b-mid {
-        .message-row {
-            min-height: 42px;
-            margin: 8px 10px;
-            .m-r-text {
-                &__left {
-                    padding: 8px 10px;
-                    background-color: rgb(24, 38, 51);
-                    width: fit-content;
-                    border-radius: 10px;
-                    margin-right: auto;
+
+    .block-body {
+        height: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;
+        scrollbar-width: thin;
+        .c-b-mid {
+            display: flex;
+            flex-direction: column;
+            width: 728px;
+            .space {
+                height: 100vh;
+                width: 100%;
+                display: flex;
+                span {
+                    margin: auto;
+                    color: #73b9f5;
+                    font-size: 33px;
                 }
-                &__right {
-                    padding: 8px 10px;
-                    background-color: #1d3952;;
-                    width: fit-content;
-                    border-radius: 10px;
-                    margin-left: auto;
+            }
+            .message-row {
+                min-height: 42px;
+                margin: 8px 10px;
+                .m-r-text {
+                    &__left {
+                        padding: 8px 10px;
+                        background-color: rgb(24, 38, 51);
+                        width: fit-content;
+                        border-radius: 10px;
+                        margin-right: auto;
+                    }
+                    &__right {
+                        padding: 8px 10px;
+                        background-color: #1d3952;;
+                        width: fit-content;
+                        border-radius: 10px;
+                        margin-left: auto;
+                    }
                 }
             }
         }
     }
-    
     .c-b-bot {
         height: 48px;
         background-color: rgb(24, 38, 51);
@@ -55,7 +74,28 @@
     height: calc(100% - 24px); ;  
     opacity: .3; 
     z-index: -1;
-    //opacity: 0.4;
     background-image: url(https://i.pinimg.com/originals/57/e2/f2/57e2f2e847f85db9c70666698a81b96f.jpg);
     background-repeat: round;
 }
+
+
+.block-body::-webkit-scrollbar {
+    width: 0.4em;
+    margin-left: 0.4em;
+    
+  }
+
+  .block-body:hover::-webkit-scrollbar {
+    width: .8em;
+  }
+   
+  .block-body::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  }
+   
+  .block-body::-webkit-scrollbar-thumb {
+    background-color: #aaa;
+    outline: 1px solid slategrey;
+    outline: none;
+    border-radius: 8px;
+  }

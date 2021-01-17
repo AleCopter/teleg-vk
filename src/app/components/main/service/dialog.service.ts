@@ -159,7 +159,7 @@ export class DialogService {
                                 },
                                 user: {
                                     id: user.id,
-                                    online: user.status._ === 'userStatusOnline' ? true : false,
+                                    online: user.status?._ === 'userStatusOnline' ? true : false,
                                 },
                                 isMigrated: false,
                             });

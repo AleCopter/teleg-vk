@@ -1,7 +1,10 @@
 <div class="chat-block">
-    <perfect-scrollbar #scrollChat style="padding-right: 10px;" (psScrollUp)="scrollUp($event)">
+    <div #scrollChat class="block-body" (scroll)="scrollUp($event)">
       <div class="c-b-mid">
-        <div *ngFor="let m of messages" class="message-row" [ngSwitch]="m.out">
+        <div #spaceEl class="space">
+          <span *ngIf="isEnd"> Сообщения закончились :(</span>
+        </div>
+        <div *ngFor="let m of chatService.messages" class="message-row" [ngSwitch]="m.out">
           <div class="m-r-text__left" *ngSwitchCase="false">
             {{m.message}}
           </div>
@@ -10,7 +13,7 @@
           </div>
         </div>
       </div>
-    </perfect-scrollbar>
+    </div>
     <div class="c-b-bot">
       <textarea class="area" placeholder="Write a message..." (keydown)="sendMessage($event)"></textarea>
     </div>

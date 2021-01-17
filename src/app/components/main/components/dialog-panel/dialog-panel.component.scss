@@ -6,20 +6,46 @@
         display: flex;
         flex-direction: column;
         .block-header {
-            width: 558px;
+            width: 100%;
             height: 60px;
             box-shadow: 1px 1px 10px 1px black;
             z-index: 10;
         }
-        .space {
-            height: 4px;
-            border: beige;
-            width: 100%;
-            background: #17212b;
+        .scroll-box {
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scrollbar-width: thin;
+            .space {
+                height: 4px;
+                border: beige;
+                width: 100%;
+                background: #17212b;
+            }
+            
+            .row:hover {
+                background: #1d3044;
+            }
         }
-        
-        .row:hover {
-            background: #1d3044;
-        }
+
     }
 
+
+
+    .scroll-box::-webkit-scrollbar {
+        width: 0.4em;
+        margin-left: 0.4em;
+        
+      }
+
+       
+      .scroll-box::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+      }
+       
+      .scroll-box::-webkit-scrollbar-thumb {
+        background-color: #aaa;
+        outline: 1px solid slategrey;
+        outline: none;
+        border-radius: 8px;
+      }

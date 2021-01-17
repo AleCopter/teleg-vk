@@ -25,6 +25,7 @@ import { DialogPanelComponent } from './components/main/components/dialog-panel/
 import { DialogRowComponent } from './components/main/components/dialog-panel/dialog-row/dialog-row.component';
 import { SafePipe } from './pipes/safe.pipe';
 import { ChatPanelComponent } from './components/main/components/chat-panel/chat-panel.component';
+import { ChatService } from './components/main/service/chat.service';
 
 registerLocaleData(localeRu);
 
@@ -61,7 +62,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
 
     BrowserAnimationsModule,
   ],
-  providers: [TelegramAPIService, VkAPIService, DialogService, AuthService, 
+  providers: [TelegramAPIService, VkAPIService, DialogService, ChatService, AuthService, 
     {
       provide: PERFECT_SCROLLBAR_CONFIG,
       useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
