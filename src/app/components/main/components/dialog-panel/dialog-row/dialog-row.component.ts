@@ -31,7 +31,6 @@ export class DialogRowComponent implements OnInit {
     this._dialogService.updateMessage.subscribe(
 
       (data: {id: number, source: string, message: string, date: number}) => {
-        console.log(data);
         if(data.source !== 'none' && this.d.user) {
           if (data.id === this.d.user?.id && data.source === this.d.source) {
             this.d.message = data.message;
@@ -47,7 +46,6 @@ export class DialogRowComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.d);
   }
 
   public getColorIcon(data: string): string {

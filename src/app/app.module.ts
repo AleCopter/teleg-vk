@@ -26,6 +26,7 @@ import { DialogRowComponent } from './components/main/components/dialog-panel/di
 import { SafePipe } from './pipes/safe.pipe';
 import { ChatPanelComponent } from './components/main/components/chat-panel/chat-panel.component';
 import { ChatService } from './components/main/service/chat.service';
+import { TimePipe } from './pipes/time.pipe';
 
 registerLocaleData(localeRu);
 
@@ -43,6 +44,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
 
     DateMessagePipe,
     SafePipe,
+    TimePipe,
 
     UserConfigComponent,
     MainComponent,

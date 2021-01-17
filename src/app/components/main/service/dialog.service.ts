@@ -147,7 +147,7 @@ export class DialogService {
                                 source: 'telegram',
                                 type: 'user',
                                 title: user.first_name,
-                                image: user.photo ? this.telegAPIservice._getImage(dialogList, index, mess.peer_id.user_id, user.access_hash, user.photo.photo_small.local_id, user.photo.photo_small.volume_id) : '',
+                                image: user.photo ? this.telegAPIservice.getImage(dialogList, index, mess.peer_id.user_id, user.access_hash, user.photo.photo_small.local_id, user.photo.photo_small.volume_id) : '',
                                 out: mess.out,
                                 message: mess.message,
                                 count: result.dialogs[index].unread_count,

@@ -17,7 +17,7 @@ export class TelegramAPIService {
 
   private _currentUser: any;
 
-  public updateMessage = new BehaviorSubject(0);
+  public updateMessage = new BehaviorSubject({mess: [], users: [], init: true});
   public updateDialogStatus = new BehaviorSubject({ id: 0, source: 'none', online: false });
   public updateDialogMessage = new BehaviorSubject({ id: 0, source: 'none', message: '', date: 0 })
 
@@ -149,7 +149,7 @@ export class TelegramAPIService {
                 dialogList.push({
                   type: 'user',
                   title: user.first_name,
-                  image: user.photo ? this._getImage(dialogList, index, mess.peer_id.user_id, user.access_hash, user.photo.photo_small.local_id, user.photo.photo_small.volume_id) : '',
+                  image: user.photo ? this.getImage(dialogList, index, mess.peer_id.user_id, user.access_hash, user.photo.photo_small.local_id, user.photo.photo_small.volume_id) : '',
                   out: mess.out,
                   message: mess.message,
                   count: result.dialogs[index].unread_count,
@@ -215,24 +215,15 @@ export class TelegramAPIService {
   }
 
   public getHistory(_peer: any, _add_offset?: number): void {
-    //console.log(_peer)
+    console.log('getHistory')
     this._mtProto.call('messages.getHistory', {
       limit: 20,
       add_offset: _add_offset ? _add_offset : 0,
       peer: _peer,
     }).then((result: any) => {
-      //console.log(result)
-      /*
-      let newMess = [];
-      result.messages.forEach((mess: any) => {
-        newMess.push({
-          text: mess,
-          owner: 
-        })
-      });
-      */
+      console.log(result)
       console.log('ssss');
-      this.updateMessage.next(result.messages);
+      this.updateMessage.next({mess: result.messages, users: result.users, init: false});
     })
   }
 
@@ -249,7 +240,7 @@ export class TelegramAPIService {
 
   }
 
-  public _getImage(dialogs: any, index: number, userID: number, accessHash: string, localID: number, volumeID: number) {
+  public getImage(array: any, index: number, userID: number, accessHash: string, localID: number, volumeID: number) {
     const reader = new FileReader()
 
     this._mtProto.call('upload.getFile', {
@@ -270,7 +261,7 @@ export class TelegramAPIService {
 
       reader.onload = (e: any) => {
         let objectURL = 'data:image/jpeg;base64,' + e.target.result;
-        dialogs[index].image = this.sanitization.bypassSecurityTrustUrl(e.target.result);
+        array[index].image = this.sanitization.bypassSecurityTrustUrl(e.target.result);
       };
       reader.readAsDataURL(new Blob([result.bytes], { type: 'image/jpeg' }))
 

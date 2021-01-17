@@ -13,11 +13,13 @@
         overflow-x: hidden;
         scrollbar-width: thin;
         .c-b-mid {
-            display: flex;
-            flex-direction: column;
+            //display: flex;
+            //flex-direction: column;
+            display: contents;
             width: 728px;
             .space {
-                height: 100vh;
+                //height: 100vh;
+                height: 100%;
                 width: 100%;
                 display: flex;
                 span {
@@ -28,22 +30,60 @@
             }
             .message-row {
                 min-height: 42px;
-                margin: 8px 10px;
+                margin: 2px 10px;
+
+                .m-r-row {
+                    display: flex;
+                    flex-direction: row;
+                    margin: 4px 0px;
+                    img {
+                        width: 48px;
+                        height: 48px;
+                        border-radius: 24px;
+                    }
+                }
                 .m-r-text {
                     &__left {
-                        padding: 8px 10px;
-                        background-color: rgb(24, 38, 51);
-                        width: fit-content;
-                        border-radius: 10px;
                         margin-right: auto;
+                        .content {
+                            background-color: rgb(24, 38, 51);
+                            border-radius: 10px;
+                            padding: 8px 10px;
+                            width: fit-content;
+                            height: fit-content;
+                            margin: auto 0px auto 10px;
+                            .left {
+                                text-align: left;
+                            }
+                            .name {
+                                color: #73b9f5;
+                            }
+                        }
+
                     }
                     &__right {
                         padding: 8px 10px;
-                        background-color: #1d3952;;
                         width: fit-content;
-                        border-radius: 10px;
                         margin-left: auto;
+                        .content {
+                            background-color: #1d3952;;
+                            border-radius: 10px;
+                            padding: 8px 10px;
+                            width: fit-content;
+                            height: fit-content;
+                            margin: auto 10px auto 0px;
+                            .right {
+                                text-align: right;
+                            }
+
+                            .name {
+                                color: #ffc107;
+                            }
+                        }
+
                     }
+
+
                 }
             }
         }
@@ -72,7 +112,7 @@
     position: absolute;
     width: calc(100% - 24px); 
     height: calc(100% - 24px); ;  
-    opacity: .3; 
+    opacity: .12; 
     z-index: -1;
     background-image: url(https://i.pinimg.com/originals/57/e2/f2/57e2f2e847f85db9c70666698a81b96f.jpg);
     background-repeat: round;
@@ -83,10 +123,6 @@
     width: 0.4em;
     margin-left: 0.4em;
     
-  }
-
-  .block-body:hover::-webkit-scrollbar {
-    width: .8em;
   }
    
   .block-body::-webkit-scrollbar-track {

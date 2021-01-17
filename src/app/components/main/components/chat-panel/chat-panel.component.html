@@ -1,20 +1,53 @@
 <div class="chat-block">
-    <div #scrollChat class="block-body" (scroll)="scrollUp($event)">
-      <div class="c-b-mid">
-        <div #spaceEl class="space">
-          <span *ngIf="isEnd"> Сообщения закончились :(</span>
+  <div #scrollChat class="block-body" (scroll)="scrollUp($event)">
+    <div class="c-b-mid">
+      <div #spaceEl class="space">
+        <span *ngIf="isEnd"> Сообщения закончились :(</span>
+      </div>
+      <div *ngFor="let m of chatService.messages" class="message-row" [ngSwitch]="m.out">
+
+
+
+
+
+        <div class="m-r-row m-r-text__left" *ngSwitchCase="false">
+          <img [src]="getUser(m).image" *ngIf="m.first">
+          <div style="width: 48px;" *ngIf="!m.first"> </div>
+          <div class="content">
+            <div class="name left" *ngIf="m.first">
+              {{getUser(m).name}}
+              <span style="color: white">
+                {{m.date | time}}
+              </span>
+
+            </div>
+            <div class="text">
+              {{m.message}}
+            </div>
+
+          </div>
+
         </div>
-        <div *ngFor="let m of chatService.messages" class="message-row" [ngSwitch]="m.out">
-          <div class="m-r-text__left" *ngSwitchCase="false">
-            {{m.message}}
+        <div class="m-r-row m-r-text__right" *ngSwitchCase="true">
+          <div class="content">
+            <div class="name right" *ngIf="m.first">
+              {{getUser(m).name}}
+              <span style="color: white">
+                {{m.date | time}}
+              </span>
+
+            </div>
+            <div class="text">
+              {{m.message}}
+            </div>
           </div>
-          <div class="m-r-text__right" *ngSwitchCase="true">
-            {{m.message}}
-          </div>
+          <img [src]="getUser(m).image" *ngIf="m.first">
+          <div style="width: 48px;" *ngIf="!m.first"> </div>
         </div>
       </div>
     </div>
-    <div class="c-b-bot">
-      <textarea class="area" placeholder="Write a message..." (keydown)="sendMessage($event)"></textarea>
-    </div>
   </div>
+  <div class="c-b-bot">
+    <textarea class="area" placeholder="Write a message..." (keydown)="sendMessage($event)"></textarea>
+  </div>
+</div>

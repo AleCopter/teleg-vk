@@ -4,8 +4,9 @@ import { TelegramAPIService } from 'src/app/service/telegram-api.service';
 @Injectable({providedIn: 'root'})
 export class ChatService {
 
-    public messages: any = [
-    ]
+    public messages: any = [];
+    public users: any = []
+    public load: boolean = false;
   
 
     public selectedDialog: any;
@@ -17,11 +18,13 @@ export class ChatService {
         
     }
     
-
     public selectDialog(dialog: any): void {
         console.log(dialog);
-        this.messages = [];
+
         if (dialog.source === 'telegram') {
+            this.load = true;
+            this.messages = [];
+            this.users = [];
             this.selectedDialog = dialog;
             this._telegAPIservice.getHistory(dialog.peer);
         }
