@@ -21,6 +21,7 @@ export interface Dialog {
     count: number,
     date: number,
     user?: any,
+    isMigrated: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -34,21 +35,32 @@ export class DialogService {
     public updateMessage = this.telegAPIservice.updateDialogMessage;
     public updateChanges = new BehaviorSubject(false);
 
+    //private _sound: HTMLAudioElement;
+
     constructor(
         public telegAPIservice: TelegramAPIService,
         public vkAPIService: VkAPIService,
     ) {
         this.getDialog();
+
     }
 
     public swapDialog(index: number): void {
         if (index !== 0) {
-            let dialog = this.dialogList[0];
-            this.dialogList[0] = this.dialogList[index];
-            this.dialogList[index] = dialog;
-            console.log(this.dialogList)
+            let dialog = this.dialogList[index];
+            this.dialogList.splice(index, 1)
+            this.dialogList.unshift(dialog);
             this.updateChanges.next(true);
         }
+    }
+
+    public playSound(): void {
+        let _sound = new Audio();
+        _sound.src = "../../assets/sound.mp3";
+        _sound.load();
+        _sound.play().catch((reason: any) => {
+            console.log(reason);
+        });
     }
 
     public getDialog(): void {
@@ -70,6 +82,8 @@ export class DialogService {
                 }
                 return 0;
             })
+
+            console.log(this.dialogList)
 
         });
     }
@@ -109,7 +123,8 @@ export class DialogService {
                         user: {
                             id: user.id,
                             online: user.online ? true : false,
-                        }
+                        },
+                        isMigrated: false,
                     })
                 }
             });
@@ -145,7 +160,8 @@ export class DialogService {
                                 user: {
                                     id: user.id,
                                     online: user.status._ === 'userStatusOnline' ? true : false,
-                                }
+                                },
+                                isMigrated: false,
                             });
                         }
                     });
@@ -166,7 +182,11 @@ export class DialogService {
                                 peer: {
                                     _: 'inputPeerChat',
                                     chat_id: result.dialogs[index].peer.chat_id,
-                                }
+                                },
+                                user: {
+                                    id: chat.id,
+                                },
+                                isMigrated: chat.migrated_to ? true : false,
                             });
                         }
                     });
@@ -189,7 +209,11 @@ export class DialogService {
                                     _: 'inputPeerChannel',
                                     channel_id: result.dialogs[index].peer.channel_id,
                                     access_hash: channel.access_hash
-                                }
+                                },
+                                user: {
+                                    id: channel.id,
+                                },
+                                isMigrated: false,
                             });
                         }
                     });

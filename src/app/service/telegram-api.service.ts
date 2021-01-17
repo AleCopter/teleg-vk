@@ -49,6 +49,14 @@ export class TelegramAPIService {
       }
     });
 
+
+    this._mtProto.updates.on('updateShortChatMessage', (data: any) => {
+      console.log(data)
+      this.updateDialogMessage.next({id: data.chat_id, source: "telegram", message: data.message, date: data.date });
+    });
+
+
+
     this._mtProto.updates.on('updateShortMessage', (data: any) => {
       this.updateDialogMessage.next({id: data.user_id, source: "telegram", message: data.message, date: data.date });
     });
@@ -59,6 +67,10 @@ export class TelegramAPIService {
         switch(up._) {
           case 'updateNewMessage': {
             this.updateDialogMessage.next({id: up.message.peer_id.user_id, source: "telegram", message: up.message.message, date: up.message.date})
+            break;
+          }
+          case 'updateNewChannelMessage': {
+            this.updateDialogMessage.next({id: up.message.peer_id.channel_id, source: "telegram", message: up.message.message, date: up.message.date });
             break;
           }
         } 

@@ -23,6 +23,8 @@ import { DialogService } from './components/main/service/dialog.service';
 import { MainComponent } from './components/main/main.component';
 import { DialogPanelComponent } from './components/main/components/dialog-panel/dialog-panel.component';
 import { DialogRowComponent } from './components/main/components/dialog-panel/dialog-row/dialog-row.component';
+import { SafePipe } from './pipes/safe.pipe';
+import { ChatPanelComponent } from './components/main/components/chat-panel/chat-panel.component';
 
 registerLocaleData(localeRu);
 
@@ -39,10 +41,13 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     VkTestComponent,
 
     DateMessagePipe,
+    SafePipe,
+
     UserConfigComponent,
     MainComponent,
     DialogPanelComponent,
     DialogRowComponent,
+    ChatPanelComponent,
   ],
   imports: [
     BrowserModule,
@@ -51,7 +56,6 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     HttpClientModule,
     HttpClientJsonpModule,
     MatIconModule,
-  
     MatDialogModule,
     PerfectScrollbarModule,
 

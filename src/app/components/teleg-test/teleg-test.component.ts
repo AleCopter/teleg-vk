@@ -16,7 +16,7 @@ export class TelegTestComponent implements OnInit {
   image: any;
   access_hash = "5938841401524493444" // test
 
-  public phone_number: string = '+79643436010';
+  public phone_number: string = '';
   public phone_code = '';
 
   public selectedDialog: any;

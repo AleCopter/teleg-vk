@@ -1,13 +1,13 @@
 <div class="block">
   <div class="block-header">
-    <button (click)="test()">dwdw</button>
   </div>
 
   <perfect-scrollbar style="padding-right: 10px">
     <div class="space">
 
     </div>
-    <app-dialog-row *ngFor="let d of dialogService.dialogList; let i = index" class="row" [d]="d" [index]='i' 
+    <app-dialog-row *ngFor="let d of dialogService.dialogList; let i = index" class="row" [d]="d" [index]='i'
+    [style.display]="d.isMigrated ? 'none' : null" 
       (click)="selectDialog(d)" >
 
     </app-dialog-row>

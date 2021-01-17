@@ -19,7 +19,7 @@ export class DialogRowComponent implements OnInit {
     this._dialogService.updateStatus.subscribe(
       (data: {id: number, source: string, online: boolean}) => {
         if(data.source !== 'none' && this.d.user) {
-          if (data.id === this.d.user.id && data.source === this.d.source) {
+          if (data.id === this.d.user?.id && data.source === this.d.source) {
             this.d.user.online = data.online;
             console.log(data.online)
             this._changeDetection.detectChanges();
@@ -29,13 +29,16 @@ export class DialogRowComponent implements OnInit {
     )
 
     this._dialogService.updateMessage.subscribe(
+
       (data: {id: number, source: string, message: string, date: number}) => {
+        console.log(data);
         if(data.source !== 'none' && this.d.user) {
-          if (data.id === this.d.user.id && data.source === this.d.source) {
+          if (data.id === this.d.user?.id && data.source === this.d.source) {
             this.d.message = data.message;
             this.d.date = data.date;
             this._dialogService.swapDialog(this.index);
             this._changeDetection.detectChanges();
+            this._dialogService.playSound();
           }
         }
  
