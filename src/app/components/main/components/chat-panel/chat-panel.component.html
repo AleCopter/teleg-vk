@@ -4,50 +4,20 @@
       <div #spaceEl class="space">
         <span *ngIf="isEnd"> Сообщения закончились :(</span>
       </div>
-      <div *ngFor="let m of chatService.messages" class="message-row" [ngSwitch]="m.out">
+      <div class="message-row" *ngFor="let m of chatService.messages">
 
-
-
-
-
-        <div class="m-r-row m-r-text__left" *ngSwitchCase="false">
-          <img [src]="getUser(m).image" *ngIf="m.first">
-          <div style="width: 48px;" *ngIf="!m.first"> </div>
-          <div class="content">
-            <div class="name left" *ngIf="m.first">
-              {{getUser(m).name}}
-              <span style="color: white">
-                {{m.date | time}}
-              </span>
-
-            </div>
-            <div class="text">
-              {{m.message}}
-            </div>
-
-          </div>
-
-        </div>
-        <div class="m-r-row m-r-text__right" *ngSwitchCase="true">
-          <div class="content">
-            <div class="name right" *ngIf="m.first">
-              {{getUser(m).name}}
-              <span style="color: white">
-                {{m.date | time}}
-              </span>
-
-            </div>
-            <div class="text">
-              {{m.message}}
-            </div>
-          </div>
-          <img [src]="getUser(m).image" *ngIf="m.first">
-          <div style="width: 48px;" *ngIf="!m.first"> </div>
+        <app-mess-user-icon *ngIf="m.first" [image]="getUser(m).image" [position]="m.out"></app-mess-user-icon>
+        <div [ngClass]="{'content': true, 'content__left': !m.out, 'content__right': m.out}">
+          <app-mess-header *ngIf="m.first" [name]="getUser(m).name" [date]="m.date" [position]="m.out">
+          </app-mess-header>
+          <app-mess-text [message]="m.message" [position]="m.out"></app-mess-text>
+          <app-mess-photo *ngIf="m.photo" [image]="m.photo" [position]="m.out"></app-mess-photo>
+          <app-mess-video *ngIf="m.media?.document?.mime_type === 'video/mp4'" [preview]="m.preview" [position]="m.out"
+            [media]="m.media"></app-mess-video>
+          <app-mess-audio *ngIf="m.media?.document?.mime_type === 'audio/ogg'" [media]="m.media"></app-mess-audio>
         </div>
       </div>
     </div>
   </div>
-  <div class="c-b-bot">
-    <textarea class="area" placeholder="Write a message..." (keydown)="sendMessage($event)"></textarea>
-  </div>
+  <app-textarea></app-textarea>
 </div>

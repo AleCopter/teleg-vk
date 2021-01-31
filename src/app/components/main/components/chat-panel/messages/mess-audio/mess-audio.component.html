@@ -1,0 +1,7 @@
+<audio *ngIf="src" [src]="src" controls autoplay>
+</audio>
+
+<div *ngIf="!src" class="audio-preview">
+    <div class="text">Голосовое сообщение</div>
+    <button (click)="loadAudio()">Play</button>
+</div>

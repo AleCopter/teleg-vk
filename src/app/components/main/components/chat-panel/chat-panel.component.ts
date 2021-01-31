@@ -1,6 +1,10 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { TelegramAPIService } from 'src/app/service/telegram-api.service';
 import { ChatService } from '../../service/chat.service';
+import { DialogService } from '../../service/dialog.service';
+import { UserStorageService } from '../../service/user-storage.service';
 
 @Component({
   selector: 'app-chat-panel',
@@ -16,11 +20,15 @@ export class ChatPanelComponent implements OnInit {
   public isEnd: boolean = false;
 
   private _lastScrollTop: any;
+  private _querySubscription!: Subscription;
 
   constructor(
     public chatService: ChatService,
+    public dialogService: DialogService,
     public telegAPIservice: TelegramAPIService,
-    private _changeDetection: ChangeDetectorRef
+    private _userStrorageService: UserStorageService,
+    private _changeDetection: ChangeDetectorRef,
+    private _route: ActivatedRoute,
   ) {
     this.chatService.updateMessage.subscribe((data: { mess: Array<any>, users: Array<any>, init: boolean }) => {
       if (!data.init) {
@@ -28,7 +36,8 @@ export class ChatPanelComponent implements OnInit {
         console.log(data);
 
         this._setUsers(data.users);
-
+        
+        //this._changeDetection.detectChanges();
 
         this._lastScrollTop = this.scrollChat.nativeElement.scrollTop;
         if (data.mess.length === 0) {
@@ -39,12 +48,12 @@ export class ChatPanelComponent implements OnInit {
 
           data.mess = data.mess.reverse();
           let firstDate = data.mess[0].date;
-          let firstId = data.mess[0].from_id ? data.mess[0].from_id.user_id :  data.mess[0].peer_id.user_id
+          let firstId = data.mess[0].from_id ? data.mess[0].from_id.user_id : data.mess[0].peer_id.user_id
           data.mess.forEach((m: any, index: number) => {
             let currentId = m.from_id ? m.from_id.user_id : m.peer_id.user_id
             if (index === 0) {
               m.first = true;
-            } else if ((( m.date - firstDate) < 300) && (firstId === currentId)) {
+            } else if (((m.date - firstDate) < 300) && (firstId === currentId)) {
               m.first = false;
             } else {
               m.first = true;
@@ -53,8 +62,9 @@ export class ChatPanelComponent implements OnInit {
             }
           });
           data.mess = data.mess.reverse();
-          
 
+
+          console.log('push')
           data.mess.forEach((m: any) => {
             this.chatService.messages.unshift(m);
           });
@@ -80,23 +90,47 @@ export class ChatPanelComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this._querySubscription = this._route.queryParams.subscribe(
+      (queryParam: any) => {
+        switch(queryParam.source) {
+          case 'telegram': {
+            const DIALOG = this.dialogService.dialogList.find(dialog => dialog.search_id === queryParam.search_id);
+            if (DIALOG) {
+              this.telegAPIservice.getHistory(DIALOG.peer);
+            }
+          }
+        }
+          console.log(queryParam.source);
+          //console.log(queryParam.chat_id);
+      }
+  );
   }
 
   private _setUsers(users: Array<any>): void {
+    console.log(users);
+    console.log(this.dialogService.userStorage);
     users.forEach((user: any, index: number) => {
-      let a = this.chatService.users.find((u: any) => u.id === user.id)
-      if (a === undefined) {
-        this.chatService.users.push(
-          {
-            id: user.id,
-            name: user.first_name,
-            image: user.photo ? this.telegAPIservice.getImage(this.chatService.users, index, user.id, user.access_hash, user.photo.photo_small.local_id, user.photo.photo_small.volume_id) : '',
-          }
-        )
+      let a;
+      if (user.bot) {
+
+      } else {
+
+        a = this._userStrorageService.findUser('telegram', 'user', user.id)
       }
-      //console.log(user);
+
+      if (a === undefined) {
+        let image;
+        if (user.photo) {
+          image = { user_id: user.id, access_hash: user.access_hash, _: 'inputPeerUser', local_id: user.photo.photo_small.local_id, volume_id: user.photo.photo_small.volume_id };
+        }
+        this._userStrorageService.addUser({
+          title: user.first_name,
+          source: 'telegram',
+          image: image,
+          id: user.id
+        });
+      }
     })
-    //console.log(this.chatService.users);
   }
 
   public scrollUp(event: any): void {
@@ -112,22 +146,31 @@ export class ChatPanelComponent implements OnInit {
     else {
     }
     this._lastScrollTop = st;
-    /*
-    if (event.target.scrollTop < 500 && !this._load && !this.isEnd) {
-      this._load = true;
-      this.telegAPIservice.getHistory(this.chatService.selectedDialog.peer, this.messages.length);
-    }
-    */
   }
 
   public getUser(m: any): { image: any, name: string } {
+    let user;
     //console.log(m)
-    const USER = this.chatService.users.find((user: any) => user.id === m.from_id?.user_id)
-    return USER !== undefined ? USER : this.chatService.users.find((user: any) => user.id === m.peer_id?.user_id);
+    switch (m.peer_id._) {
+      case 'peerUser': {
+        let id = m.from_id?.user_id ? m.from_id.user_id : m.peer_id.user_id;
+        user = this._userStrorageService.findUser('telegram', 'user', id)
+        break;
+      }
+      case 'peerChannel': {
+        let id = m.from_id?.user_id ? m.from_id.user_id : m.peer_id.channel_id;
+        user = this._userStrorageService.findUser('telegram', m.from_id?.user_id ? 'user': 'channel', id)
+        break;
+      }
+      case 'peerChat': {
+        let id = m.from_id?.user_id ? m.from_id.user_id : m.peer_id.channel_id;
+        user = this._userStrorageService.findUser('telegram', m.from_id?.user_id ? 'user': 'channel', id)
+        break;
+      }
+    }
+    //console.log(user)
+    return { image: user.image$, name: user.name }
   }
-
-  public sendMessage(event: any): void { };
-
 
 }
 

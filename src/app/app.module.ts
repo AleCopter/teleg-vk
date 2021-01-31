@@ -27,6 +27,14 @@ import { SafePipe } from './pipes/safe.pipe';
 import { ChatPanelComponent } from './components/main/components/chat-panel/chat-panel.component';
 import { ChatService } from './components/main/service/chat.service';
 import { TimePipe } from './pipes/time.pipe';
+import { MessPhotoComponent } from './components/main/components/chat-panel/messages/mess-photo/mess-photo.component';
+import { MessVideoComponent } from './components/main/components/chat-panel/messages/mess-video/mess-video.component';
+import { MessAudioComponent } from './components/main/components/chat-panel/messages/mess-audio/mess-audio.component';
+import { MessUserIconComponent } from './components/main/components/chat-panel/messages/mess-user-icon/mess-user-icon.component';
+import { MessTextComponent } from './components/main/components/chat-panel/messages/mess-text/mess-text.component';
+import { MessHeaderComponent } from './components/main/components/chat-panel/messages/mess-header/mess-header.component';
+import { MathFloorPipe } from './pipes/math-floor.pipe';
+import { TextareaComponent } from './components/main/components/chat-panel/control-panel/textarea/textarea.component';
 
 registerLocaleData(localeRu);
 
@@ -45,12 +53,20 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     DateMessagePipe,
     SafePipe,
     TimePipe,
+    MathFloorPipe,
 
     UserConfigComponent,
     MainComponent,
     DialogPanelComponent,
     DialogRowComponent,
     ChatPanelComponent,
+    MessPhotoComponent,
+    MessVideoComponent,
+    MessAudioComponent,
+    MessUserIconComponent,
+    MessTextComponent,
+    MessHeaderComponent,
+    TextareaComponent,
   ],
   imports: [
     BrowserModule,

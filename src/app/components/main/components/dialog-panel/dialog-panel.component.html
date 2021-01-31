@@ -1,5 +1,6 @@
-<div class="block">
+<div [@openClose]="isHidden ? 'open' : 'close'" class="block">
   <div class="block-header">
+    <button (click)="openClose()">dwdw</button>
   </div>
 
   <div class="scroll-box">

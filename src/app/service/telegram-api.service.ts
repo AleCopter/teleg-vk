@@ -1,6 +1,7 @@
 import { Injectable, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MTProto } from '@mtproto/core';
+import { promise } from 'protractor';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
@@ -17,9 +18,21 @@ export class TelegramAPIService {
 
   private _currentUser: any;
 
-  public updateMessage = new BehaviorSubject({mess: [], users: [], init: true});
+  public updateMessage = new BehaviorSubject({ mess: [], users: [], init: true });
   public updateDialogStatus = new BehaviorSubject({ id: 0, source: 'none', online: false });
   public updateDialogMessage = new BehaviorSubject({ id: 0, source: 'none', message: '', date: 0 })
+
+
+  private _typeFileDow: any = {
+    m: 'm',
+    mp4: 'video/mp4',
+    mp3: 'audio/mp3'
+  }
+
+  private _typeFileBlob: any = {
+    m: 'image/jpeg',
+    mp4: 'video/mp4'
+  }
 
   constructor(
     private sanitization: DomSanitizer,
@@ -29,51 +42,51 @@ export class TelegramAPIService {
 
     this._mtProto.updates.on('updateShort', (message: any) => {
       const { update } = message;
-    
+
       if (update._ === 'updateUserStatus') {
         const { user_id, status } = update;
-    
+
         console.log(`User with id ${user_id} change status to ${status}`);
         console.log(status)
 
-        switch(status._) {
+        switch (status._) {
           case 'userStatusOnline': {
-            this.updateDialogStatus.next({id: user_id, source: "telegram", online: true})
+            this.updateDialogStatus.next({ id: user_id, source: "telegram", online: true })
             break;
           }
           default: {
-            this.updateDialogStatus.next({id: user_id, source: "telegram", online: false})
+            this.updateDialogStatus.next({ id: user_id, source: "telegram", online: false })
             break;
           }
-        } 
+        }
       }
     });
 
 
     this._mtProto.updates.on('updateShortChatMessage', (data: any) => {
       console.log(data)
-      this.updateDialogMessage.next({id: data.chat_id, source: "telegram", message: data.message, date: data.date });
+      this.updateDialogMessage.next({ id: data.chat_id, source: "telegram", message: data.message, date: data.date });
     });
 
 
 
     this._mtProto.updates.on('updateShortMessage', (data: any) => {
-      this.updateDialogMessage.next({id: data.user_id, source: "telegram", message: data.message, date: data.date });
+      this.updateDialogMessage.next({ id: data.user_id, source: "telegram", message: data.message, date: data.date });
     });
 
     this._mtProto.updates.on('updates', (data: any) => {
       console.log(data)
       data.updates.forEach((up: any) => {
-        switch(up._) {
+        switch (up._) {
           case 'updateNewMessage': {
-            this.updateDialogMessage.next({id: up.message.peer_id.user_id, source: "telegram", message: up.message.message, date: up.message.date})
+            this.updateDialogMessage.next({ id: up.message.peer_id.user_id, source: "telegram", message: up.message.message, date: up.message.date })
             break;
           }
           case 'updateNewChannelMessage': {
-            this.updateDialogMessage.next({id: up.message.peer_id.channel_id, source: "telegram", message: up.message.message, date: up.message.date });
+            this.updateDialogMessage.next({ id: up.message.peer_id.channel_id, source: "telegram", message: up.message.message, date: up.message.date });
             break;
           }
-        } 
+        }
       });
     });
 
@@ -149,7 +162,7 @@ export class TelegramAPIService {
                 dialogList.push({
                   type: 'user',
                   title: user.first_name,
-                  image: user.photo ? this.getImage(dialogList, index, mess.peer_id.user_id, user.access_hash, user.photo.photo_small.local_id, user.photo.photo_small.volume_id) : '',
+                  image: user.photo ? this.getImage(dialogList, user.photo.dc_id, index, mess.peer_id.user_id, user.access_hash, '', user.photo.photo_small.local_id, user.photo.photo_small.volume_id) : '',
                   out: mess.out,
                   message: mess.message,
                   count: result.dialogs[index].unread_count,
@@ -223,7 +236,31 @@ export class TelegramAPIService {
     }).then((result: any) => {
       console.log(result)
       console.log('ssss');
-      this.updateMessage.next({mess: result.messages, users: result.users, init: false});
+
+      result.messages.forEach((element: any, index: number) => {
+        if (element.media) {
+          if (element.media.photo) {
+            this.getMediaPhoto(result.messages, index, 'photo', element.media.photo.id, element.media.photo.access_hash, element.media.photo.file_reference, element.media.photo.sizes[1])
+          }
+        }
+      });
+
+      result.messages.forEach((element: any, index: number) => {
+        if (element.media) {
+          if (element.media.document) {
+            //console.log(element.media.document);
+            switch (element.media.document.mime_type) {
+              case 'video/mp4':
+                this.getMediaDocument(result.messages, element.media.document.dc_id, index, 'preview', element.media.document.id, 'm', element.media.document.access_hash, element.media.document.file_reference, element.media.document.thumbs[1])
+                break;
+              case 'audio/ogg':
+                break;
+            }
+          }
+        }
+      });
+
+      this.updateMessage.next({ mess: result.messages, users: result.users, init: false });
     })
   }
 
@@ -240,33 +277,195 @@ export class TelegramAPIService {
 
   }
 
-  public getImage(array: any, index: number, userID: number, accessHash: string, localID: number, volumeID: number) {
+  public getPreview(array: any, index: number, bytes: any) {
+    console.log(bytes);
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      array[index].preview = this.sanitization.bypassSecurityTrustUrl(e.target.result);
+    };
+    reader.readAsDataURL(new Blob([bytes]))
+  }
+
+  public getMediaVideo(id: number, dcId: number, thumbType: string, accessHash: string, fileReference: any, offset: number): Promise<Object> {
+    return this._mtProto.call('upload.getFile', {
+      //precise: true,
+      limit: 1048576,
+      offset: offset ? offset : 0,
+      location: {
+        _: 'inputDocumentFileLocation',
+        id: id,
+        access_hash: accessHash,
+        file_reference: fileReference,
+        thumb_size: this._typeFileDow[thumbType],
+      },
+    },
+      {
+        dcId: dcId,
+      })
+  }
+
+  public getMediaDocument(array: any, dcId: number, index: number, name: string, id: number, thumbType: string, accessHash: string, fileReference: any, thumbSize: string, bytes?: any, offset?: number): void {
+    this._mtProto.call('upload.getFile', {
+      limit: 524288,
+      offset: offset ? offset : 0,
+      location: {
+        _: 'inputDocumentFileLocation',
+        id: id,
+        access_hash: accessHash,
+        file_reference: fileReference,
+        thumb_size: this._typeFileDow[thumbType],
+      },
+    },
+      {
+        dcId: dcId,
+      }).then((result: any) => {
+        console.log(result)
+        if (result.bytes.length === 524288) {
+          console.log(bytes)
+          var c;
+          if (bytes) {
+            c = new Int8Array(bytes.length + result.bytes.length);
+            c.set(bytes);
+            c.set(result.bytes, bytes.length);
+          } else {
+            c = result.bytes;
+          }
+          let o = offset ? offset + 524288 : 524288;
+          this.getMediaDocument(array, dcId, index, name, id, thumbType, accessHash, fileReference, thumbSize, c, o)
+        }
+
+        var c;
+        if (bytes) {
+          c = new Int8Array(bytes.length + result.bytes.length);
+          c.set(bytes);
+          c.set(result.bytes, bytes.length);
+          console.log(c)
+        } else {
+          c = result.bytes;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          let objectURL = 'data:image/jpeg;base64,' + e.target.result;
+          array[index][name] = this.sanitization.bypassSecurityTrustUrl(e.target.result);
+        };
+        reader.readAsDataURL(new Blob([c], { type: this._typeFileBlob[thumbType] }),)
+      }).catch(res => {
+        console.log(res)
+      })
+  }
+
+  public getMediaPhoto(array: any, index: number, name: string, id: number, accessHash: string, fileReference: any, thumbSize: string): void {
+    console.log(id);
+    console.log(accessHash);
+    console.log(fileReference);
+
+    const reader = new FileReader();
+    this._mtProto.call('upload.getFile', {
+      limit: 524288,
+      location: {
+        _: 'inputPhotoFileLocation',
+        id: id,
+        access_hash: accessHash,
+        file_reference: fileReference,
+        thumb_size: 'm',
+      }
+    }).then((result: any) => {
+      console.log(result.bytes);
+      reader.onload = (e: any) => {
+        let objectURL = 'data:image/jpeg;base64,' + e.target.result;
+        array[index][name] = this.sanitization.bypassSecurityTrustUrl(e.target.result);
+      };
+      reader.readAsDataURL(new Blob([result.bytes], { type: 'image/jpeg' }))
+    }).catch(res => {
+      console.log(res)
+    })
+  }
+
+  public getUserProfileIcon(dcId: number, userID: number, accessHash: string, typePeer: string, localID: number, volumeID: number): Observable<any>{
+    const subj = new Subject();
+    /*
+    console.log(userID)
+    */
+    this._mtProto.call('upload.getFile', {
+      limit: 524288,
+      location: {
+        _: 'inputPeerPhotoFileLocation',
+        peer: {
+          _: typePeer,
+          user_id: userID,
+          channel_id: userID,
+          access_hash: accessHash
+        },
+        local_id: localID,
+        volume_id: volumeID
+      }
+    },
+      {
+        dcId: dcId,
+      }).then((result: any) => {
+        const READER = new FileReader()
+        READER.onload = (e: any) => {
+          subj.next(this.sanitization.bypassSecurityTrustUrl(e.target.result));
+          subj.complete();
+        };
+        READER.readAsDataURL(new Blob([result.bytes], { type: 'image/jpeg' }))
+
+      }, err => {
+        console.log(err);
+        subj.next(null);
+        subj.complete();
+     
+      });
+
+      return subj;
+  }
+
+  public getImage(array: any, dcId: number, index: number, userID: number, accessHash: string, typePeer: string, localID: number, volumeID: number) {
     const reader = new FileReader()
+
 
     this._mtProto.call('upload.getFile', {
       limit: 524288,
       location: {
         _: 'inputPeerPhotoFileLocation',
         peer: {
-          _: 'inputPeerUser',
+          _: typePeer,
           user_id: userID,
+          channel_id: userID,
           access_hash: accessHash
         },
         local_id: localID,
         volume_id: volumeID
       }
+    },
+      {
+        dcId: dcId,
+      }).then((result: any) => {
+        console.log(result);
 
-    }).then((result: any) => {
-      console.log(result);
+        reader.onload = (e: any) => {
+          let objectURL = 'data:image/jpeg;base64,' + e.target.result;
+          array[index].image = this.sanitization.bypassSecurityTrustUrl(e.target.result);
+        };
+        reader.readAsDataURL(new Blob([result.bytes], { type: 'image/jpeg' }))
 
-      reader.onload = (e: any) => {
-        let objectURL = 'data:image/jpeg;base64,' + e.target.result;
-        array[index].image = this.sanitization.bypassSecurityTrustUrl(e.target.result);
-      };
-      reader.readAsDataURL(new Blob([result.bytes], { type: 'image/jpeg' }))
+      }, err => {
 
-    }, err => { console.log(err) });
+        console.log(err);
+        console.log(userID)
+      });
 
   }
 
+}
+
+enum Obe {
+  mp4 = 'video/mp4',
+  m = 'm'
+}
+
+enum TypeFileBlob {
+  m = 'image/jpeg',
+  mp4 = 'video/mp4'
 }

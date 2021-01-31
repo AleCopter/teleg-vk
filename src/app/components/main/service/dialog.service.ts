@@ -5,6 +5,7 @@ import { TelegramAPIService } from 'src/app/service/telegram-api.service';
 import { VkAPIService } from 'src/app/service/vk-api.service';
 
 export interface Dialog {
+    search_id: any;
     source: string;
     type: string;
     image: any,
@@ -27,6 +28,8 @@ export interface Dialog {
 @Injectable({ providedIn: 'root' })
 export class DialogService {
 
+    public userStorage: Array<any> = [];
+
     public dialogList: Array<Dialog> = [];
 
     public users: Array<any> = [];
@@ -41,7 +44,7 @@ export class DialogService {
         public telegAPIservice: TelegramAPIService,
         public vkAPIService: VkAPIService,
     ) {
-        this.getDialog();
+        //this.getDialog();
 
     }
 
@@ -63,15 +66,16 @@ export class DialogService {
         });
     }
 
+    // Получение полного списка диалогов
     public getDialog(): void {
         const m = forkJoin([this.vkAPIService.getConversations(), this.telegAPIservice.getConversations()]);
         m.subscribe(([result1, result2]) => {
+            console.log(result2)
             this.users = this._formUserTeleg(result2.users);
             let dialogVk: Array<Dialog> = this._formDialogVk(result1);
             let dialogTeleg: Array<Dialog> = this._formDialogTeleg(result2);
             let dialogs: Array<Dialog> = dialogVk.concat(dialogTeleg);
-            console.log(result1)
-            console.log(result2)
+            
 
             this.dialogList = dialogs.sort((a, b) => {
                 if (a.date < b.date) {
@@ -83,8 +87,7 @@ export class DialogService {
                 return 0;
             })
 
-            console.log(this.dialogList)
-
+            console.log(dialogs);
         });
     }
 
@@ -95,26 +98,31 @@ export class DialogService {
         result.forEach((user: any) => {
             if (user.status) {
                 users.push({
+                    source: 'telegram',
+                    type: 'user',
                     id: user.id,
                     online: user.status._ === 'userStatusOnline' ? true : false,
                 })
             }
         });
-
+        console.log(users);
         return users;
     }
 
     private _formDialogVk(result: any): Array<Dialog> {
         let dialogList: Array<Dialog> = [];
+        //console.log(l)
         result.response.items.forEach((mess: any, index: number) => {
             console.log(mess);
             result.response.profiles.forEach((user: any) => {
                 if (user.id === mess.conversation.peer.id) {
                     dialogList.push({
+                        search_id: '',
                         source: 'vk',
                         type: 'user',
                         title: user.first_name + ' ' + user.last_name,
-                        image: this.vkAPIService.getImage(dialogList, index, user.photo_50),
+                        image: '',
+                        //image: this.vkAPIService.getImage(dialogList, index, user.photo_50),
                         out: mess.last_message.out ? true : false,
                         message: mess.last_message.text,
                         count: mess.conversation.unread_count ? mess.conversation.unread_count : 0,
@@ -144,10 +152,21 @@ export class DialogService {
                         if (user.id === mess.peer_id.user_id) {
                             //console.log(user)
                             dialogList.push({
+                                search_id: user.id + '_' + user.access_hash,
                                 source: 'telegram',
                                 type: 'user',
                                 title: user.first_name,
-                                image: user.photo ? this.telegAPIservice.getImage(dialogList, index, mess.peer_id.user_id, user.access_hash, user.photo.photo_small.local_id, user.photo.photo_small.volume_id) : '',
+                                
+                                image: user.photo ? {
+                                    _: 'inputPeerUser',
+                                    dc_id: user.photo.dc_id,
+                                    user_id: mess.peer_id.user_id,
+                                    access_hash: user.access_hash,
+                                    local_id: user.photo.photo_small.local_id,
+                                    volume_id: user.photo.photo_small.volume_id,
+                                } : '',
+                                
+                                //image: user.photo ? this.telegAPIservice.getImage(dialogList, user.photo.dc_id, index, mess.peer_id.user_id, user.access_hash, 'inputPeerUser', user.photo.photo_small.local_id, user.photo.photo_small.volume_id) : '',
                                 out: mess.out,
                                 message: mess.message,
                                 count: result.dialogs[index].unread_count,
@@ -171,6 +190,7 @@ export class DialogService {
                     result.chats.forEach((chat: any) => {
                         if (chat.id === mess.peer_id.chat_id) {
                             dialogList.push({
+                                search_id: chat.id,
                                 source: 'telegram',
                                 type: 'chat',
                                 title: chat.title,
@@ -197,10 +217,19 @@ export class DialogService {
                     result.chats.forEach((channel: any) => {
                         if (channel.id === mess.peer_id.channel_id) {
                             dialogList.push({
+                                search_id: channel.id + '_' + channel.access_hash,
                                 source: 'telegram',
                                 type: 'channel',
                                 title: channel.title,
-                                image: '',
+                                image: channel.photo.photo_small  ? {
+                                    _: 'inputPeerChannel',
+                                    dc_id: channel.photo.dc_id,
+                                    channel_id: mess.peer_id.channel_id,
+                                    access_hash: channel.access_hash,
+                                    local_id: channel.photo.photo_small.local_id,
+                                    volume_id: channel.photo.photo_small.volume_id,
+                                } : '',
+                                //image: channel.photo.photo_small ? this.telegAPIservice.getImage(dialogList, channel.photo.dc_id, index, mess.peer_id.channel_id, channel.access_hash, 'inputPeerChannel', channel.photo.photo_small.local_id, channel.photo.photo_small.volume_id) : '',
                                 out: mess.out,
                                 message: mess.message,
                                 count: result.dialogs[index].unread_count,

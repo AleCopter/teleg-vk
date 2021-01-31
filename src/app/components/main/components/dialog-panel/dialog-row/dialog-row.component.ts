@@ -1,5 +1,8 @@
 import { ChangeDetectorRef, Component, Input, OnInit, Output } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { TelegramAPIService } from 'src/app/service/telegram-api.service';
 import { DialogService } from '../../../service/dialog.service';
+import { UserStorageService } from '../../../service/user-storage.service';
 
 @Component({
   selector: 'app-dialog-row',
@@ -11,14 +14,18 @@ export class DialogRowComponent implements OnInit {
   @Input() d: any;
   @Input() index: number = -1;
 
+  public user!: any;
+
   constructor(
     private _dialogService: DialogService,
     private _changeDetection: ChangeDetectorRef,
+    private _telegAPISercvice: TelegramAPIService,
+    private _userStrorageService: UserStorageService,
   ) {
 
     this._dialogService.updateStatus.subscribe(
-      (data: {id: number, source: string, online: boolean}) => {
-        if(data.source !== 'none' && this.d.user) {
+      (data: { id: number, source: string, online: boolean }) => {
+        if (data.source !== 'none' && this.d.user) {
           if (data.id === this.d.user?.id && data.source === this.d.source) {
             this.d.user.online = data.online;
             console.log(data.online)
@@ -30,8 +37,8 @@ export class DialogRowComponent implements OnInit {
 
     this._dialogService.updateMessage.subscribe(
 
-      (data: {id: number, source: string, message: string, date: number}) => {
-        if(data.source !== 'none' && this.d.user) {
+      (data: { id: number, source: string, message: string, date: number }) => {
+        if (data.source !== 'none' && this.d.user) {
           if (data.id === this.d.user?.id && data.source === this.d.source) {
             this.d.message = data.message;
             this.d.date = data.date;
@@ -40,12 +47,13 @@ export class DialogRowComponent implements OnInit {
             this._dialogService.playSound();
           }
         }
- 
+
       }
     )
   }
 
   ngOnInit(): void {
+    this.user = this._userStrorageService.addUser(this.d);
   }
 
   public getColorIcon(data: string): string {
@@ -65,6 +73,11 @@ export class DialogRowComponent implements OnInit {
     return colors[colorIndex];
   }
 
+  public getDialogProfile(): any {
+    //console.log(this._dialogService.userStorage[0])
+    //return this._dialogService.userStorage[0].name;
+  }
+
   public getNameIcon(data: any): string {
     let name;
     if (data.split(" ")[1] !== undefined) {
@@ -80,7 +93,7 @@ export class DialogRowComponent implements OnInit {
   public getSource(name: string): string {
     //console.log(name)
     let color: string = 'white';
-    switch(name) {
+    switch (name) {
       case 'vk': {
         color = 'linear-gradient(90deg, #2196F3 30%, transparent 100%)';
         break;

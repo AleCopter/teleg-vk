@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { TelegramAPIService } from 'src/app/service/telegram-api.service';
 
 @Injectable({providedIn: 'root'})
@@ -14,6 +15,7 @@ export class ChatService {
 
     constructor(
         private _telegAPIservice: TelegramAPIService,
+        private _router: Router,
     ) { 
         
     }
@@ -26,7 +28,9 @@ export class ChatService {
             this.messages = [];
             this.users = [];
             this.selectedDialog = dialog;
-            this._telegAPIservice.getHistory(dialog.peer);
+            console.log(dialog)
+            this._router.navigate([], { queryParams: { source: dialog.source, search_id: dialog.search_id} })
+            //this._telegAPIservice.getHistory(dialog.peer);
         }
         //
     }

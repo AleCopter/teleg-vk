@@ -1,0 +1,14 @@
+<div class="preview">
+    <!--
+*ngIf="preview && !video[0].video"
+    <img *ngIf="preview && !src" [src]="preview" >
+    -->
+    <img *ngIf="!preview"
+        src="https://i07.kanobu.ru/r/98337ae40ef114cf07c92cac8dbb9688/1040x700/u.kanobu.ru/editor/images/51/c48787a0-4259-47a3-b32a-ddb4f311c753.jpg">
+    <video *ngIf="preview" #videoRef controls="controls" [src]="src" [poster]="preview" preload="auto" autoplay></video>
+    <div *ngIf="!isLoaded && preview && !isBut" class="loading">
+        <div class="text">{{percent | mathFloor}}%</div>
+    </div>
+    <button *ngIf="isBut" (click)="loadVideo()">play</button>
+
+</div>
